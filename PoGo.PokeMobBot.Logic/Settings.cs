@@ -880,17 +880,17 @@ namespace PoGo.PokeMobBot.Logic
         //transfer
         public bool TransferDuplicatePokemon = true;
         public bool PrioritizeIvOverCp = true;
-        public int KeepMinCp = 1500;
-        public float KeepMinIvPercentage = 90;
+        public int KeepMinCp = 2000;
+        public float KeepMinIvPercentage = 97;
         public int KeepMinDuplicatePokemon = 1;
         public bool KeepPokemonsThatCanEvolve = false;
 
         //evolve
-        public bool EvolveAllPokemonWithEnoughCandy = true;
-        public bool EvolveAllPokemonAboveIv = false;
+        public bool EvolveAllPokemonWithEnoughCandy = false;
+        public bool EvolveAllPokemonAboveIv = true;
         public float EvolveAboveIvValue = 98;
-        public bool UseLuckyEggsWhileEvolving = false;
-        public int UseLuckyEggsMinPokemonAmount = 50;
+        public bool UseLuckyEggsWhileEvolving = true;
+        public int UseLuckyEggsMinPokemonAmount = 15;
 
         //levelup
         public bool AutomaticallyLevelUpPokemon = false;
@@ -899,8 +899,8 @@ namespace PoGo.PokeMobBot.Logic
         public float UpgradePokemonIvMinimum = 95;
 
         //favorite
-        public bool AutoFavoritePokemon = false;
-        public float FavoriteMinIvPercentage = 95;
+        public bool AutoFavoritePokemon = true;
+        public float FavoriteMinIvPercentage = 98;
     }
 
     public class LocationSettings
@@ -912,7 +912,7 @@ namespace PoGo.PokeMobBot.Logic
         public double DefaultLatitude = 40.782425 + double.Parse( "0.00" + random.Next(0, 900).ToString());
         public double DefaultLongitude = -73.964654 + double.Parse( "0.00" + random.Next(0, 900).ToString());
         public double DefaultAltitude = random.Next(8, 12);
-        public double WalkingSpeedInKilometerPerHour = random.Next(6, 50);
+        public double WalkingSpeedInKilometerPerHour = random.Next(30, 50);
         public int MaxSpawnLocationOffset = 10;
         public int MaxTravelDistanceInMeters = 5000;
         public bool UseGpxPathing = false;
@@ -941,7 +941,7 @@ namespace PoGo.PokeMobBot.Logic
         public bool UsePokemonToNotCatchFilter = false;
 
         //berries
-        public int UseBerryMinCp = 450;
+        public int UseBerryMinCp = 1000;
         public float UseBerryMinIv = 95;
         public double UseBerryBelowCatchProbability = 0.25;
     }
@@ -950,26 +950,26 @@ namespace PoGo.PokeMobBot.Logic
     {
         //recycle
         public bool AutomaticInventoryManagement = true;
-        public int AutomaticMaxAllPokeballs = 20;
-        public int AutomaticMaxAllPotions = 60;
-        public int AutomaticMaxAllRevives = 80;
+        public int AutomaticMaxAllPokeballs = 200;
+        public int AutomaticMaxAllPotions = 10;
+        public int AutomaticMaxAllRevives = 20;
         public int AutomaticMaxAllBerries = 50;
-        public int TotalAmountOfPokeballsToKeep = 0;
-        public int TotalAmountOfGreatballsToKeep = 40;
-        public int TotalAmountOfUltraballsToKeep = 60;
+        public int TotalAmountOfPokeballsToKeep = 40;
+        public int TotalAmountOfGreatballsToKeep = 80;
+        public int TotalAmountOfUltraballsToKeep = 120;
         public int TotalAmountOfMasterballsToKeep = 100;
-        public int TotalAmountOfPotionsToKeep = 0;
-        public int TotalAmountOfSuperPotionsToKeep = 0;
-        public int TotalAmountOfHyperPotionsToKeep = 20;
-        public int TotalAmountOfMaxPotionsToKeep = 40;
+        public int TotalAmountOfPotionsToKeep = 3;
+        public int TotalAmountOfSuperPotionsToKeep = 5;
+        public int TotalAmountOfHyperPotionsToKeep = 10;
+        public int TotalAmountOfMaxPotionsToKeep = 30;
         public int TotalAmountOfRevivesToKeep = 20;
-        public int TotalAmountOfMaxRevivesToKeep = 60;
+        public int TotalAmountOfMaxRevivesToKeep = 40;
         public int TotalAmountOfRazzToKeep = 50;
         //public int TotalAmountOfBlukToKeep = 50;
         //public int TotalAmountOfNanabToKeep = 50;
         //public int TotalAmountOfPinapToKeep = 50;
         //public int TotalAmountOfWeparToKeep = 50;
-        public double RecycleInventoryAtUsagePercentage = 0.90;
+        public double RecycleInventoryAtUsagePercentage = 0.85;
     }
 
     public class SnipeConfig
