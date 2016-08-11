@@ -129,6 +129,10 @@ namespace PoGo.PokeMobBot.Logic.State
                 await Task.Delay(2000, cancellationToken);
                 Environment.Exit(0);
             }
+            catch (Exception ex)
+            {
+                return new LoginState();
+            }
 
             return this;
         }

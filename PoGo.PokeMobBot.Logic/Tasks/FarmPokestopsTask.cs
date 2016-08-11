@@ -14,6 +14,7 @@ using PoGo.PokeMobBot.Logic.Utils;
 using PokemonGo.RocketAPI.Extensions;
 using POGOProtos.Map.Fort;
 using POGOProtos.Networking.Responses;
+using System.Security.Cryptography;
 
 #endregion
 
@@ -25,14 +26,16 @@ namespace PoGo.PokeMobBot.Logic.Tasks
 
         public static async Task Execute(ISession session, CancellationToken cancellationToken)
         {
+            Random random = new Random();
             if (session.LogicSettings.Teleport)
-                await Teleport(session, cancellationToken);
+                await Teleport(session, cancellationToken, random);
             else
-                await NoTeleport(session, cancellationToken);
+                await NoTeleport(session, cancellationToken, random);
         }
 
-        public static async Task Teleport(ISession session, CancellationToken cancellationToken)
+        public static async Task Teleport(ISession session, CancellationToken cancellationToken, Random random)
         {
+            bool ShownSoftBanMessage = false;
             int stopsToHit = 20; //We should return to the main loop after some point, might as well limit this.
             //Not sure where else we could put this? Configs maybe if we incorporate
             //deciding how many pokestops in a row we want to hit before doing things like recycling?
@@ -87,9 +90,29 @@ namespace PoGo.PokeMobBot.Logic.Tasks
                     //resort
                     pokestopList =
                         pokestopList.OrderBy(
-                            i =>
+                            i => 
                                 LocationUtils.CalculateDistanceInMeters(session.Client.CurrentLatitude,
                                     session.Client.CurrentLongitude, i.Latitude, i.Longitude)).ToList();
+
+                    if (session.LogicSettings.UsePokeStopLuckyNumber)
+                    {
+                        if (pokestopList.Count >= session.LogicSettings.PokestopSkipLuckyNumberMinUse)
+                        {
+                            int rng = random.Next(session.LogicSettings.PokestopSkipLuckyMin, session.LogicSettings.PokestopSkipLuckyMax);
+#if DEBUG
+                            Logger.Write("Skip Pokestop RNG: " + rng.ToString() + " against " + session.LogicSettings.PokestopSkipLuckyNumber.ToString(), LogLevel.Debug);
+#endif
+                            if (rng == session.LogicSettings.PokestopSkipLuckyNumber)
+                            {
+#if DEBUG
+                                Logger.Write("Skipping Pokestop due to the rng god's will.", LogLevel.Debug);
+#endif
+                                pokestopList.RemoveAt(0);
+                            }
+                        }
+                    }
+
+
                     var pokeStop = pokestopList[0];
                     pokestopList.RemoveAt(0);
 
@@ -145,12 +168,16 @@ namespace PoGo.PokeMobBot.Logic.Tasks
 
                                 fortTry += 1;
 
-                                session.EventDispatcher.Send(new FortFailedEvent
+                                if (!ShownSoftBanMessage)
                                 {
-                                    Name = fortInfo.Name,
-                                    Try = fortTry,
-                                    Max = retryNumber - zeroCheck
-                                });
+                                    session.EventDispatcher.Send(new FortFailedEvent
+                                    {
+                                        Name = fortInfo.Name,
+                                        Try = fortTry,
+                                        Max = retryNumber - zeroCheck
+                                    });
+                                    ShownSoftBanMessage = true;
+                                }
                                 if (session.LogicSettings.Teleport)
                                     await Task.Delay(session.LogicSettings.DelaySoftbanRetry);
                                 else
@@ -178,7 +205,7 @@ namespace PoGo.PokeMobBot.Logic.Tasks
                     } while (fortTry < retryNumber - zeroCheck);
                     //Stop trying if softban is cleaned earlier or if 40 times fort looting failed.
 
-
+                    ShownSoftBanMessage = false;
                     if (session.LogicSettings.Teleport)
                         await Task.Delay(session.LogicSettings.DelayPokestop);
                     else
@@ -245,7 +272,7 @@ namespace PoGo.PokeMobBot.Logic.Tasks
             }
         }
 
-        public static async Task NoTeleport(ISession session, CancellationToken cancellationToken) { 
+        public static async Task NoTeleport(ISession session, CancellationToken cancellationToken, Random random) { 
             cancellationToken.ThrowIfCancellationRequested();
 
             var distanceFromStart = LocationUtils.CalculateDistanceInMeters(
@@ -290,6 +317,25 @@ namespace PoGo.PokeMobBot.Logic.Tasks
                         i =>
                             LocationUtils.CalculateDistanceInMeters(session.Client.CurrentLatitude,
                                 session.Client.CurrentLongitude, i.Latitude, i.Longitude)).ToList();
+
+                if (session.LogicSettings.UsePokeStopLuckyNumber)
+                {
+                    if (pokestopList.Count >= session.LogicSettings.PokestopSkipLuckyNumberMinUse)
+                    {
+                        int rng = random.Next(session.LogicSettings.PokestopSkipLuckyMin, session.LogicSettings.PokestopSkipLuckyMax);
+#if DEBUG
+                        Logger.Write("Skip Pokestop RNG: " + rng.ToString() + " against " + session.LogicSettings.PokestopSkipLuckyNumber.ToString(), LogLevel.Debug);
+#endif
+                        if (rng == session.LogicSettings.PokestopSkipLuckyNumber)
+                        {
+#if DEBUG
+                            Logger.Write("Skipping Pokestop due to the rng god's will.", LogLevel.Debug);
+#endif
+                            pokestopList.RemoveAt(0);
+                        }
+                    }
+                }
+
                 var pokeStop = pokestopList[0];
                 pokestopList.RemoveAt(0);
 
@@ -447,14 +493,14 @@ namespace PoGo.PokeMobBot.Logic.Tasks
         {
             var mapObjects = await session.Client.Map.GetMapObjects();
 
-            var pokeStops = mapObjects.Item1.MapCells.SelectMany(i => i.Forts);
+            var pokeStops = mapObjects.MapCells.SelectMany(i => i.Forts);
 
             session.EventDispatcher.Send(new PokeStopListEvent { Forts = pokeStops.ToList() });
 
             // Wasn't sure how to make this pretty. Edit as needed.
             if (session.LogicSettings.Teleport)
             {
-                pokeStops = mapObjects.Item1.MapCells.SelectMany(i => i.Forts)
+                pokeStops = mapObjects.MapCells.SelectMany(i => i.Forts)
                     .Where(
                         i =>
                             i.Type == FortType.Checkpoint &&
@@ -468,7 +514,7 @@ namespace PoGo.PokeMobBot.Logic.Tasks
             }
             else
             {
-                pokeStops = mapObjects.Item1.MapCells.SelectMany(i => i.Forts)
+                pokeStops = mapObjects.MapCells.SelectMany(i => i.Forts)
                     .Where(
                         i =>
                             i.Type == FortType.Checkpoint &&

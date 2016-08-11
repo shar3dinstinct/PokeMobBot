@@ -28,6 +28,11 @@ namespace PoGo.PokeMobBot.Logic.Tasks
             if (encounter is EncounterResponse && pokemon == null)
                 throw new ArgumentException("Parameter pokemon must be set, if encounter is of type EncounterResponse",
                     nameof(pokemon));
+            RuntimeSettings.CheckScan();
+            if (RuntimeSettings.DelayingScan)
+            {
+                return false;
+            }
 
             CatchPokemonResponse caughtPokemonResponse;
             var attemptCounter = 1;
@@ -231,12 +236,21 @@ namespace PoGo.PokeMobBot.Logic.Tasks
                 session.LogicSettings.PokemonToUseMasterball.Contains(pokemonId))
                 return ItemId.ItemMasterBall;
             if (ultraBallsCount > 0 && iV >= session.LogicSettings.UseUltraBallAboveIv ||
-                probability <= useUltraBallBelowCatchProbability)
+                ultraBallsCount > 0 && probability <= useUltraBallBelowCatchProbability)
                 return ItemId.ItemUltraBall;
             if (greatBallsCount > 0 && iV >= session.LogicSettings.UseGreatBallAboveIv ||
-                probability <= useGreatBallBelowCatchProbability)
+                greatBallsCount > 0 && probability <= useGreatBallBelowCatchProbability)
                 return ItemId.ItemGreatBall;
-            return pokeBallsCount > 0 ? ItemId.ItemPokeBall : ItemId.ItemUnknown;
+            //so we counted down, now if we don't have pokeballs we need to just use the best one available
+            if (pokeBallsCount > 0)
+                return ItemId.ItemPokeBall;
+            else if (greatBallsCount > 0)
+                return ItemId.ItemGreatBall;
+            else if (ultraBallsCount > 0)
+                return ItemId.ItemUltraBall;
+            else
+                return ItemId.ItemUnknown;
+            //return pokeBallsCount > 0 ? ItemId.ItemPokeBall : ItemId.ItemUnknown;
         }
 
         private static async Task UseBerry(ISession session, ulong encounterId, string spawnPointId)

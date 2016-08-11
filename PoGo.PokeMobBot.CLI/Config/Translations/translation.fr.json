@@ -221,7 +221,8 @@
       "Value": "Les coordonnées définies dans le fichier \"Coords.ini\" sont invalides, utilisation des coordonnées par défaut."
     },
     {
-      "Key": "gotUpToDateVersion",
+      "Key": "gotUpToDate
+        ",
       "Value": "PokeMobBot v{0} est à jour."
     },
     {

@@ -74,6 +74,11 @@ namespace PoGo.PokeMobBot.Logic
         int MaxTravelDistanceInMeters { get; }
         bool UseGpxPathing { get; }
         string GpxFile { get; }
+        bool UsePokeStopLuckyNumber { get; }
+        int PokestopSkipLuckyNumberMinUse { get; }
+        int PokestopSkipLuckyNumber { get; }
+        int PokestopSkipLuckyMin { get; }
+        int PokestopSkipLuckyMax { get; }
 
         //delays
         int DelayBetweenPlayerActions { get; }
@@ -181,7 +186,7 @@ namespace PoGo.PokeMobBot.Logic
         int MinPokeballsToSnipe { get; }
         int MinPokeballsWhileSnipe { get; }
         int SnipeLocationServerPort { get; }
-        string SnipeLocationServer { get; }
+        string SnipeLocationServer { get; } 
         int SnipeRequestTimeoutSeconds { get; }
         bool CatchWildPokemon { get; }
 
