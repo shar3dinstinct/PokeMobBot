@@ -587,6 +587,7 @@ namespace PoGo.PokeMobBot.Logic.Tasks
                         session.EventDispatcher.Send(new ErrorEvent { Message = ex.ToString() });
                         scanResult = new ScanResult { Pokemon = new List<PokemonLocation>() };
                     }
+                    await Task.Delay(5000, cancellationToken);
                 }
                 else
                 {
@@ -626,8 +627,9 @@ namespace PoGo.PokeMobBot.Logic.Tasks
                         // most likely System.IO.IOException
                         session.EventDispatcher.Send(new ErrorEvent { Message = ex.ToString() });
                     }
+                    await Task.Delay(5000, cancellationToken);
                 }
-                await Task.Delay(5000, cancellationToken);
+               
             }
         }
     }
