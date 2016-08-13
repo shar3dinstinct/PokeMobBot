@@ -1,3 +1,7 @@
+<h1>Welcome to MobBot</h1>
+<br>
+Temporary repository until we get our old one back. **Erroneous DMCA claims** have shut down the main repo for a week or so. We will preserve commit history when we move back to the main repo so feel free to contribute!
+<br>
 <br>
 Visit our discord to hang out and get updates: https://discord.gg/8msqsWV <br/>
 <br>
