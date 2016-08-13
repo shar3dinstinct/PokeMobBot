@@ -50,7 +50,7 @@ Donate Bitcoins to FeroxRev (the original API library developer): <br>
  - Power-Up pokemon
  
 <h2><a name="getting-started">Getting Started</a></h2>
-Make sure you check out our [Wiki](https://github.com/PocketMobsters/PokeMobBot/wiki) to get started. <br>
+Make sure you check out our [Wiki](https://github.com/PocketMobsters/MobBotTemp/wiki) to get started. <br>
 MD5 Hash (v1.1.3) : bc0b52fb3d64c6d712820ff31a89ea61 <br>
 <br>
 <h2><a name="credits">Credits</a></h2><br>
