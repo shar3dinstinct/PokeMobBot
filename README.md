@@ -53,6 +53,7 @@ MD5 Hash (v1.1.3) : bc0b52fb3d64c6d712820ff31a89ea61 <br>
 **Ferox** - API and Console, without such contributions, projects like this would never have been possible. <br/>
 **PokeMobTeam Dev & staff** - Their relentless work day after day on adding new features, ironing out bugs and maintaining the ever growing community.<br>
 **Everyone else who submitted Pull Requests** - Big or small, the work from unmentioned contributors are what makes this project community-oriented. <br>
+**Everyone who contributed to NecroBot** before we split off and became our own entitiy, including ourselves since aparently we also need to credit ourselves? Commit history has been lost to history since NecroBot shutdown.
 <br>
 <h2><a name="copyright">Copyright</a></h2><br>
  Copyright (c) 2016, MobBotTeam  All rights reserved.<br>
