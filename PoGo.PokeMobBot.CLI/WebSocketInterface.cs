@@ -88,7 +88,7 @@ namespace PoGo.PokeMobBot.CLI
                 msgObj = JsonConvert.DeserializeObject<Models.SocketMessage>(message);
                 command = msgObj.Command;
             }
-            catch { }
+            catch (Exception ex) {Logger.Write(ex.Message, LogLevel.Error); }
 
             // Action request from UI should not be broadcasted to all client
             Action<IEvent> action = (evt) => session.Send(Serialize(evt));
@@ -135,7 +135,7 @@ namespace PoGo.PokeMobBot.CLI
                     Longitude = _session.Client.CurrentLongitude
                 }));
             }
-            catch { }
+            catch (Exception ex) {Logger.Write(ex.Message, LogLevel.Error); }
         }
 
         public void Listen(IEvent evt, Session session)
@@ -175,7 +175,7 @@ namespace PoGo.PokeMobBot.CLI
 
         public override bool CanConvert(Type objectType)
         {
-            return typeof(System.Int64).Equals(objectType) || typeof(ulong).Equals(objectType);
+            return typeof(Int64).Equals(objectType) || typeof(ulong).Equals(objectType);
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)

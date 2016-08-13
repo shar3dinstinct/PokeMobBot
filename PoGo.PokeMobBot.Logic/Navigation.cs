@@ -3,6 +3,7 @@
 #region using directives
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,7 +11,6 @@ using GeoCoordinatePortable;
 using PoGo.PokeMobBot.Logic.Utils;
 using PokemonGo.RocketAPI;
 using POGOProtos.Networking.Responses;
-using System.Collections.Generic;
 
 #endregion
 
@@ -32,6 +32,7 @@ namespace PoGo.PokeMobBot.Logic
             _client = client;
             UpdatePositionEvent = updatePos;
         }
+
         public Navigation(Client client)
         {
             _client = client;
@@ -53,8 +54,8 @@ namespace PoGo.PokeMobBot.Logic
             var nextWaypointDistance = speedInMetersPerSecond;
             var waypoint = LocationUtils.CreateWaypoint(sourceLocation, nextWaypointDistance, nextWaypointBearing);
 
-            List<GeoCoordinate> Waypoints = new List<GeoCoordinate>();
-            
+            var Waypoints = new List<GeoCoordinate>();
+
             //Initial walking
             var requestSendDateTime = DateTime.Now;
             var result =
@@ -106,14 +107,14 @@ namespace PoGo.PokeMobBot.Logic
         }
 
         public async Task<PlayerUpdateResponse> HumanPathWalking(GeoCoordinate targetLocation,
-            double walkingSpeedInKilometersPerHour, Func<Task<bool>> functionExecutedWhileWalking, Func<Task<bool>> functionExecutedWhileWalking2,
+            double walkingSpeedInKilometersPerHour, Func<Task<bool>> functionExecutedWhileWalking,
+            Func<Task<bool>> functionExecutedWhileWalking2,
             CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             //PlayerUpdateResponse result = null;
 
-           
 
             var speedInMetersPerSecond = walkingSpeedInKilometersPerHour/3.6;
 
@@ -182,7 +183,7 @@ namespace PoGo.PokeMobBot.Logic
         public async Task Teleport(GeoCoordinate targetLocation)
         {
             await _client.Player.UpdatePlayerLocation(
-                targetLocation.Latitude, 
+                targetLocation.Latitude,
                 targetLocation.Longitude,
                 _client.Settings.DefaultAltitude);
 
@@ -190,10 +191,6 @@ namespace PoGo.PokeMobBot.Logic
         }
 
         public event UpdatePositionDelegate UpdatePositionEvent;
-
-
-
-        //BACKUP OF HUMAN WALKING
         /*
         public async Task<PlayerUpdateResponse> HumanLikeWalking(GeoCoordinate targetLocation,
             double walkingSpeedInKilometersPerHour, Func<Task<bool>> functionExecutedWhileWalking,
@@ -261,5 +258,8 @@ namespace PoGo.PokeMobBot.Logic
             return result;        
         }
         */
+
+
+        //BACKUP OF HUMAN WALKING
     }
 }
