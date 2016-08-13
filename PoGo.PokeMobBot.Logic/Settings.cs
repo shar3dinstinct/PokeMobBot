@@ -104,9 +104,9 @@ namespace PoGo.PokeMobBot.Logic
 
         public static DateTime startTime = DateTime.Now;
         public static bool DelayingScan = false;
-        public static int PokemonScanDelay = 5000;// in ms
+        public static int PokemonScanDelay = 10000;// in ms
 
-        public static void CheckScan()
+        public static bool CheckScan()
         {
             if (DelayingScan)
             {
@@ -114,6 +114,13 @@ namespace PoGo.PokeMobBot.Logic
                 {
                     DelayingScan = false;
                 }
+                return false;
+            }
+            else
+            {
+                startTime = DateTime.Now;
+                DelayingScan = true;
+                return true;
             }
         }
     }

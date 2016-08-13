@@ -17,6 +17,8 @@ namespace PoGo.PokeMobBot.Logic.Tasks
     {
         public static async Task Execute(ISession session, FortData currentFortData, CancellationToken cancellationToken)
         {
+
+            
             cancellationToken.ThrowIfCancellationRequested();
 
             // Refresh inventory so that the player stats are fresh

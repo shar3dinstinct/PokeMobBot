@@ -28,11 +28,7 @@ namespace PoGo.PokeMobBot.Logic.Tasks
             if (encounter is EncounterResponse && pokemon == null)
                 throw new ArgumentException("Parameter pokemon must be set, if encounter is of type EncounterResponse",
                     nameof(pokemon));
-            RuntimeSettings.CheckScan();
-            if (RuntimeSettings.DelayingScan)
-            {
-                return false;
-            }
+            
 
             CatchPokemonResponse caughtPokemonResponse;
             var attemptCounter = 1;

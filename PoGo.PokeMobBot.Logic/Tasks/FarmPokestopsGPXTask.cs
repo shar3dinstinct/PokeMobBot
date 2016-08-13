@@ -13,6 +13,7 @@ using PoGo.PokeMobBot.Logic.State;
 using PoGo.PokeMobBot.Logic.Utils;
 using PokemonGo.RocketAPI.Extensions;
 using POGOProtos.Map.Fort;
+using GeoCoordinatePortable;
 
 #endregion
 
@@ -136,17 +137,26 @@ namespace PoGo.PokeMobBot.Logic.Tasks
                             }
                         }
 
-                        await session.Navigation.HumanPathWalking(
-                            trackPoints.ElementAt(curTrkPt),
+                        var targetLocation = new GeoCoordinate(Convert.ToDouble(trackPoints.ElementAt(curTrkPt).Lat, CultureInfo.InvariantCulture),
+                Convert.ToDouble(trackPoints.ElementAt(curTrkPt).Lon, CultureInfo.InvariantCulture));
+
+                        Navigation navi = new Navigation(session.Client);
+                        await navi.HumanPathWalking(
+                            targetLocation,
                             session.LogicSettings.WalkingSpeedInKilometerPerHour,
                             async () =>
                             {
                                 await CatchNearbyPokemonsTask.Execute(session, cancellationToken);
                                 //Catch Incense Pokemon
                                 await CatchIncensePokemonsTask.Execute(session, cancellationToken);
-                                await UseNearbyPokestopsTask.Execute(session, cancellationToken);
+                                
                                 return true;
                             },
+                            async () => 
+                            {
+                                await UseNearbyPokestopsTask.Execute(session, cancellationToken);
+                                return true;
+                            },   
                             cancellationToken
                             );
 

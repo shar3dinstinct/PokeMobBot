@@ -22,6 +22,9 @@ namespace PoGo.PokeMobBot.CLI
 
         private static void Main(string[] args)
         {
+            
+
+
             if (Console.LargestWindowWidth >= 145)
             {
                 Console.WindowWidth = 145;
