@@ -1,10 +1,5 @@
-<!-- define warning icon -->
-[1.1]: https://i.imgur.com/M4fJ65n.png (ATTENTION)
-<!-- title -->
-<h1>THE BOT IS NOT WORKING AT THE MOMENT <br> WE ARE WORKING ON THIS</h1>
-<h2><b>Please check our Twitter for more informations!</b> <br>We are answering Dev-Related Questions there too: https://twitter.com/PokeMobBot/with_replies</h2>
 <br>
-Visit our discord for further information: https://discord.gg/8msqsWV <br/>
+Visit our discord to hang out and get updates: https://discord.gg/8msqsWV <br/>
 <br>
 <br>
 <h1>Pokemon Go Bot based on FeroxRevs API</h1>
