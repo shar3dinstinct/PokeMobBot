@@ -123,7 +123,6 @@
     <Compile Include="ConsoleLogger.cs" />
     <Compile Include="Models\LoggingStrings.cs" />
     <Compile Include="Models\SocketMessage.cs" />
-    <Compile Include="ObfuscationSettings.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
