@@ -921,7 +921,10 @@ namespace PoGo.PokeMobBot.Logic
         //display
         public bool DisplayPokemonMaxPoweredCp = true;
         public bool DisplayPokemonMovesetRank = true;
+        //Login exception
+        public bool StopBotToAvoidBanOnUnknownLoginError = true;
 
+        //humanized pathing
         public bool UseHumanPathing = true;
     }
 
@@ -1859,6 +1862,8 @@ namespace PoGo.PokeMobBot.Logic
         public int MinRandomizeDelayMilliseconds => _settings.DelaySettings.MinRandomizeDelayMilliseconds;
         public int MaxRandomizeDelayMilliseconds => _settings.DelaySettings.MaxRandomizeDelayMilliseconds;
         public bool ReRandomizeDelayOnStart => _settings.DelaySettings.ReRandomizeDelayOnStart;
+
+        public bool StopBotToAvoidBanOnUnknownLoginError => _settings.StartUpSettings.StopBotToAvoidBanOnUnknownLoginError;
 
     }
 

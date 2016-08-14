@@ -157,7 +157,9 @@ namespace PoGo.PokeMobBot.Logic.Common
         LogEntryUnFavorite, //added by Lars
         PokemonFavorite, //added by Lars
         PokemonUnFavorite, //added by Lars
-        WalkingSpeedRandomized //added by Lars
+        WalkingSpeedRandomized, //added by Lars
+        StopBotToAvoidBan,
+        BotNotStoppedRiskOfBan
     }
 
     public class Translation : ITranslation
@@ -389,7 +391,9 @@ namespace PoGo.PokeMobBot.Logic.Common
             new KeyValuePair<TranslationString, string>(TranslationString.LogEntryUnFavorite, "UNFAVORITE"), // added by Lars
             new KeyValuePair<TranslationString, string>(TranslationString.PokemonFavorite, "{0}"), //pre-formatted - added by Lars
             new KeyValuePair<TranslationString, string>(TranslationString.PokemonUnFavorite, "{0}"), //pre-formatted - added by Lars
-            new KeyValuePair<TranslationString, string>(TranslationString.WalkingSpeedRandomized, "{0}") //pre-formatted - added by Lars
+            new KeyValuePair<TranslationString, string>(TranslationString.WalkingSpeedRandomized, "{0}"), //pre-formatted - added by Lars
+            new KeyValuePair<TranslationString, string>(TranslationString.StopBotToAvoidBan, "The bot was stopped to avoid ban!"), // added by Lars
+            new KeyValuePair<TranslationString, string>(TranslationString.BotNotStoppedRiskOfBan, "Somethng happened that shouldn't have and bot hasn't stopped. Higher possibility of ban. (suggested action: stop the bot \"Control+C\")."), // added by Lars
         };
 
         [JsonProperty("Pokemon",

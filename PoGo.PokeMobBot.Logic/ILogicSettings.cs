@@ -68,7 +68,7 @@ namespace PoGo.PokeMobBot.Logic
         int AmountOfPokemonToDisplayOnStartIv { get; }
         bool StartupWelcomeDelay { get; }
         string TranslationLanguageCode { get; }
-
+        bool StopBotToAvoidBanOnUnknownLoginError { get; }
         bool UseHumanPathing { get; }
 
         //coords and movement
@@ -229,6 +229,5 @@ namespace PoGo.PokeMobBot.Logic
 
         Dictionary<PokemonId, TransferFilter> PokemonsTransferFilter { get; }
         SnipeSettings PokemonToSnipe { get; }
-
     }
 }
