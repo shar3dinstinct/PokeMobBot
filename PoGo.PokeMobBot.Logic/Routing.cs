@@ -7,6 +7,8 @@ using System.Text;
 using GeoCoordinatePortable;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json;
+using PoGo.PokeMobBot.Logic.Logging;
+
 namespace PoGo.PokeMobBot.Logic
 {
     public static class Routing
@@ -15,10 +17,12 @@ namespace PoGo.PokeMobBot.Logic
         {
             try
             {
+                Logger.Write("Requesting routing info to www.yournavigation.org", LogLevel.Debug);
                 WebRequest request = WebRequest.Create(
                   $"http://www.yournavigation.org" + $"/api/1.0/gosmore.php?format=geojson&flat={start.Latitude}&flon={start.Longitude}&tlat={dest.Latitude}&tlon={dest.Longitude}&v=foot&fast=1&layer=mapnik");
                 request.Credentials = CredentialCache.DefaultCredentials;
                 WebResponse response = request.GetResponse();
+                Logger.Write("Got response from www.yournavigation.org", LogLevel.Debug);
                 //Console.WriteLine(((HttpWebResponse)response).StatusDescription);
                 Stream dataStream = response.GetResponseStream();
                 StreamReader reader = new StreamReader(dataStream);
@@ -32,7 +36,7 @@ namespace PoGo.PokeMobBot.Logic
             }
             catch(Exception ex)
             {
-                Console.WriteLine("Routing error: " + ex.Message);
+                Logger.Write("Routing error: " + ex.Message, LogLevel.Debug);
             }
             return new RoutingResponse();  
         }
