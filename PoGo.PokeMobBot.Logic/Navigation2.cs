@@ -69,11 +69,6 @@ namespace PoGo.PokeMobBot.Logic
             //TODO: refactor the generation of waypoint code to break the waypoints given to us by the routing information down into segements like above.
             //generate waypoints new code
             var RoutingResponse = Routing.GetRoute(currentLocation, destination);
-            // If for some reason the GetRoute fails (timeout as I experienced, silently exit instead of throwing red about coordinates being null)
-            if (RoutingResponse.coordinates == null)
-            {
-                return result;
-            }
             foreach(var item in RoutingResponse.coordinates)
             {
                 //0 = lat, 1 = long (MAYBE NOT THO?)
