@@ -69,11 +69,6 @@ namespace PoGo.PokeMobBot.Logic
             //TODO: refactor the generation of waypoint code to break the waypoints given to us by the routing information down into segements like above.
             //generate waypoints new code
             var RoutingResponse = Routing.GetRoute(currentLocation, destination);
-            // If for some reason the GetRoute fails (timeout as I experienced, silently exit instead of throwing red about coordinates being null)
-            if (RoutingResponse.coordinates == null)
-            {
-                return result;
-            }
             foreach(var item in RoutingResponse.coordinates)
             {
                 //0 = lat, 1 = long (MAYBE NOT THO?)
@@ -98,11 +93,17 @@ namespace PoGo.PokeMobBot.Logic
 
             //makes you appear to move slower if you're catching pokemon, hitting stops, etc.
             //This feels like more human behavior. Dunnomateee
-            Navigation navi = new Navigation(_client);
+            Navigation navi = new Navigation(_client, UpdatePositionEvent);
             
             //MILD REWRITE TO USE HUMANPATHWALKING;
             for (int x = 0; x < waypoints.Count; x++)
             {
+                // skip waypoints under 5 meters
+                var sourceLocation = new GeoCoordinate(_client.CurrentLatitude, _client.CurrentLongitude);
+                double distanceToTarget = LocationUtils.CalculateDistanceInMeters(sourceLocation, waypoints.ToArray()[x]);
+                if (distanceToTarget <= 5)
+                    continue;
+
                 await navi.HumanPathWalking(waypoints.ToArray()[x], session.LogicSettings.WalkingSpeedInKilometerPerHour,
                     functionExecutedWhileWalking, functionExecutedWhileWalking2, cancellationToken);
                 UpdatePositionEvent?.Invoke(waypoints.ToArray()[x].Latitude, waypoints.ToArray()[x].Longitude);
