@@ -93,7 +93,7 @@ namespace PoGo.PokeMobBot.Logic
 
             //makes you appear to move slower if you're catching pokemon, hitting stops, etc.
             //This feels like more human behavior. Dunnomateee
-            Navigation navi = new Navigation(_client);
+            Navigation navi = new Navigation(_client, UpdatePositionEvent);
             
             //MILD REWRITE TO USE HUMANPATHWALKING;
             for (int x = 0; x < waypoints.Count; x++)
