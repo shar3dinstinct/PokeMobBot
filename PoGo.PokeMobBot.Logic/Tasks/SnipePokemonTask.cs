@@ -292,9 +292,9 @@ namespace PoGo.PokeMobBot.Logic.Tasks
             await session.Client.Player.UpdatePlayerLocation(CurrentLatitude, CurrentLongitude,
                 session.Client.CurrentAltitude);
 
-            foreach (var _pokemon in catchablePokemon)
+            foreach (var pokemon in catchablePokemon)
             {
-                var pokemon = new PokemonCacheItem(_pokemon);
+                //var pokemon = new PokemonCacheItem(_pokemon);
                 cancellationToken.ThrowIfCancellationRequested();
 
                 EncounterResponse encounter;
@@ -320,7 +320,7 @@ namespace PoGo.PokeMobBot.Logic.Tasks
                         Longitude = CurrentLongitude
                     });
 
-                    if (!await CatchPokemonTask.Execute(session, encounter, pokemon))
+                    if (!await CatchPokemonTask.Execute(session, encounter, new PokemonCacheItem(pokemon)))
                     {
                         // Don't snipe any more pokemon if we ran out of one kind of pokeballs.
                         session.EventDispatcher.Send(new SnipeModeEvent { Active = false });
