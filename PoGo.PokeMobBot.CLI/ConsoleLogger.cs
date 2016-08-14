@@ -112,6 +112,14 @@ namespace PoGo.PokeMobBot.CLI
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss")}] ({LoggingStrings.Update}) {message}");
                     break;
+                case LogLevel.Favorite:  //added by Lars
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss")}] ({LoggingStrings.Favorite}) {message}");
+                    break;
+                case LogLevel.UnFavorite:  //added by Lars
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss")}] ({LoggingStrings.UnFavorite}) {message}");
+                    break;
                 default:
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss")}] ({LoggingStrings.Error}) {message}");

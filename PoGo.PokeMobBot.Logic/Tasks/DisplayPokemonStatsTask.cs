@@ -25,13 +25,13 @@ namespace PoGo.PokeMobBot.Logic.Tasks
 
             var trainerLevel = 40;
 
-            var highestsPokemonCp = await session.Inventory.GetHighestsCp(session.LogicSettings.AmountOfPokemonToDisplayOnStart);
+            var highestsPokemonCp = await session.Inventory.GetHighestsCp(session.LogicSettings.AmountOfPokemonToDisplayOnStartCp);
             var pokemonPairedWithStatsCp = highestsPokemonCp.Select(pokemon => new PokemonAnalysis(pokemon, trainerLevel)).ToList();
 
             var highestsPokemonCpForUpgrade = await session.Inventory.GetHighestsCp(50);
             var pokemonPairedWithStatsCpForUpgrade = highestsPokemonCpForUpgrade.Select(pokemon => new PokemonAnalysis(pokemon, trainerLevel)).ToList();
 
-            var highestsPokemonPerfect = await session.Inventory.GetHighestsPerfect(session.LogicSettings.AmountOfPokemonToDisplayOnStart);
+            var highestsPokemonPerfect = await session.Inventory.GetHighestsPerfect(session.LogicSettings.AmountOfPokemonToDisplayOnStartIv);
             var pokemonPairedWithStatsIv = highestsPokemonPerfect.Select(pokemon => new PokemonAnalysis(pokemon, trainerLevel)).ToList();
 
             var highestsPokemonIvForUpgrade = await session.Inventory.GetHighestsPerfect(50);

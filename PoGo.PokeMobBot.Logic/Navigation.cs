@@ -12,6 +12,8 @@ using PoGo.PokeMobBot.Logic.Utils;
 using PoGo.PokeMobBot.Logic.Logging;
 using PokemonGo.RocketAPI;
 using POGOProtos.Networking.Responses;
+using PoGo.PokeMobBot.Logic.State;
+using PoGo.PokeMobBot.Logic.Event;
 
 #endregion
 
@@ -27,7 +29,37 @@ namespace PoGo.PokeMobBot.Logic
     {
         private const double SpeedDownTo = 10/3.6;
         private readonly Client _client;
-
+        #region RandomizeWalkingSpeed
+        //RandomizeWalkingSpeedSettings
+        private static DateTime timeSinceLastWalkingSpeedRandomization = new DateTime(0);
+        private static DateTime projectedNextWalkingSpeedRandomization = new DateTime(0);
+        private double currentSpeedInKPH;
+        private static Random rand = new Random();
+        public double RandomizeWalkingSpeed(ISession session, double walkingSpeedKPH)
+        {
+            if (timeSinceLastWalkingSpeedRandomization.Ticks == 0 && projectedNextWalkingSpeedRandomization.Ticks == 0)
+            {
+                timeSinceLastWalkingSpeedRandomization = DateTime.Now;
+                projectedNextWalkingSpeedRandomization = timeSinceLastWalkingSpeedRandomization.AddMinutes(session.LogicSettings.MinutesUntilRandomizeWalkingSpeed);
+                currentSpeedInKPH = walkingSpeedKPH;
+            }
+            else if (projectedNextWalkingSpeedRandomization.Ticks < DateTime.Now.Ticks)
+            {
+                var oldSpeed = currentSpeedInKPH;
+                currentSpeedInKPH = rand.NextDouble() *
+                    (session.LogicSettings.MaxRandomizeWalkingSpeedInKph - session.LogicSettings.MinRandomizeWalkingSpeedInKph)
+                    + session.LogicSettings.MinRandomizeWalkingSpeedInKph;
+                timeSinceLastWalkingSpeedRandomization = DateTime.Now;
+                projectedNextWalkingSpeedRandomization = timeSinceLastWalkingSpeedRandomization.AddMinutes(session.LogicSettings.MinutesUntilRandomizeWalkingSpeed);
+                session.EventDispatcher.Send(new WalkingSpeedRandomizedEvent { OldSpeed = oldSpeed, NewSpeed = currentSpeedInKPH });
+            }
+            else
+            {
+                currentSpeedInKPH = walkingSpeedKPH;
+            }
+            return currentSpeedInKPH / 3.6;
+        }
+        #endregion
         public Navigation(Client client, UpdatePositionDelegate updatePos)
         {
             _client = client;
@@ -39,13 +71,15 @@ namespace PoGo.PokeMobBot.Logic
             _client = client;
         }
 
-        public async Task<PlayerUpdateResponse> HumanLikeWalking(GeoCoordinate targetLocation,
+        public async Task<PlayerUpdateResponse> HumanLikeWalking(ISession session, GeoCoordinate targetLocation,
             double walkingSpeedInKilometersPerHour, Func<Task<bool>> functionExecutedWhileWalking,
             CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var speedInMetersPerSecond = walkingSpeedInKilometersPerHour/3.6;
+            var speedInMetersPerSecond = session.LogicSettings.RandomizeWalkingSpeed ?
+                                        RandomizeWalkingSpeed(session, walkingSpeedInKilometersPerHour) :
+                                        walkingSpeedInKilometersPerHour / 3.6;
 
             var sourceLocation = new GeoCoordinate(_client.CurrentLatitude, _client.CurrentLongitude);
             LocationUtils.CalculateDistanceInMeters(sourceLocation, targetLocation);
@@ -107,7 +141,7 @@ namespace PoGo.PokeMobBot.Logic
             return result;
         }
 
-        public async Task<PlayerUpdateResponse> HumanPathWalking(GeoCoordinate targetLocation,
+        public async Task<PlayerUpdateResponse> HumanPathWalking(ISession session, GeoCoordinate targetLocation,
             double walkingSpeedInKilometersPerHour, Func<Task<bool>> functionExecutedWhileWalking,
             Func<Task<bool>> functionExecutedWhileWalking2,
             CancellationToken cancellationToken)
@@ -117,7 +151,9 @@ namespace PoGo.PokeMobBot.Logic
             //PlayerUpdateResponse result = null;
 
 
-            var speedInMetersPerSecond = walkingSpeedInKilometersPerHour/3.6;
+            var speedInMetersPerSecond = session.LogicSettings.RandomizeWalkingSpeed ?
+                                        RandomizeWalkingSpeed(session, walkingSpeedInKilometersPerHour) :
+                                        walkingSpeedInKilometersPerHour / 3.6;
 
             var sourceLocation = new GeoCoordinate(_client.CurrentLatitude, _client.CurrentLongitude);
             double distanceToTarget = LocationUtils.CalculateDistanceInMeters(sourceLocation, targetLocation);

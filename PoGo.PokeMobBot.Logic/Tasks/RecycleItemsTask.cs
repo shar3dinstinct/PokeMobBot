@@ -32,7 +32,7 @@ namespace PoGo.PokeMobBot.Logic.Tasks
                 session.EventDispatcher.Send(new ItemRecycledEvent { Id = item.ItemId, Count = item.Count });
                     await Task.Delay(session.LogicSettings.DelayRecyleItem);
             }
-
+            checkForInvalidKeepAmount(session);
             await OptimizedRecycleBalls(session, cancellationToken);
             await OptimizedRecyclePotions(session, cancellationToken);
             await OptimizedRecycleRevives(session, cancellationToken);
@@ -40,7 +40,37 @@ namespace PoGo.PokeMobBot.Logic.Tasks
 
             await session.Inventory.RefreshCachedInventory();
         }
-
+        private static void checkForInvalidKeepAmount(ISession session)
+        {
+            int count = 0;
+            int maxInvSize = session.Profile.PlayerData.MaxItemStorage;
+            if (session.LogicSettings.AutomaticInventoryManagement)
+            {
+                count += session.LogicSettings.AutomaticMaxAllBerries +
+                        session.LogicSettings.AutomaticMaxAllPokeballs +
+                        session.LogicSettings.AutomaticMaxAllPotions +
+                        session.LogicSettings.AutomaticMaxAllRevives;
+            }
+            else
+            {
+                count += session.LogicSettings.TotalAmountOfGreatballsToKeep +
+                        session.LogicSettings.TotalAmountOfUltraballsToKeep +
+                        session.LogicSettings.TotalAmountOfMasterballsToKeep +
+                        session.LogicSettings.TotalAmountOfPokeballsToKeep +
+                        session.LogicSettings.TotalAmountOfPotionsToKeep +
+                        session.LogicSettings.TotalAmountOfMaxPotionsToKeep +
+                        session.LogicSettings.TotalAmountOfSuperPotionsToKeep +
+                        session.LogicSettings.TotalAmountOfHyperPotionsToKeep +
+                        session.LogicSettings.TotalAmountOfRevivesToKeep +
+                        session.LogicSettings.TotalAmountOfMaxRevivesToKeep +
+                        session.LogicSettings.TotalAmountOfRazzToKeep;
+            }
+            if (count > maxInvSize)
+            {
+                //session.EventDispatcher.Send(new WarnEvent { Message = session.Translation.GetTranslation(TranslationString.CheckingForMaximumInventorySize, count, maxInvSize) });
+                session.EventDispatcher.Send(new InvalidKeepAmountEvent { Count = count, Max = maxInvSize });
+            }
+        }
         private static async Task OptimizedRecycleBalls(ISession session, CancellationToken cancellationToken)
         {
             var pokeBallsCount = await session.Inventory.GetItemAmountByType(ItemId.ItemPokeBall);

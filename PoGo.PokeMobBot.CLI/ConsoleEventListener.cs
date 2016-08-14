@@ -270,7 +270,25 @@ namespace PoGo.PokeMobBot.CLI
         {
             Logger.Write(evt.ToString(), LogLevel.Update);
         }
-
+        public void HandleEvent(PokemonFavoriteEvent evt, ISession session)  //added by Lars
+        {
+            string message = string.Format("{0,-13} CP: {1,-4} IV: {2,-4:#.00}% Candies: {3}", evt.Pokemon, evt.Cp, evt.Iv, evt.Candies);
+            Logger.Write(session.Translation.GetTranslation(TranslationString.PokemonFavorite, message), LogLevel.Favorite);
+        }
+        public void HandleEvent(PokemonUnFavoriteEvent evt, ISession session) //added by Lars
+        {
+            string message = string.Format("{0,-13} CP: {1,-4} IV: {2,-4:#.00}% Candies: {3}", evt.Pokemon, evt.Cp, evt.Iv, evt.Candies);
+            Logger.Write(session.Translation.GetTranslation(TranslationString.PokemonUnFavorite, message), LogLevel.UnFavorite);
+        }
+        public void HandleEvent(InvalidKeepAmountEvent evt, ISession session) //added by Lars
+        {
+            Logger.Write(session.Translation.GetTranslation(TranslationString.CheckingForMaximumInventorySize, evt.Count, evt.Max), LogLevel.Warning);
+        }
+        public void HandleEvent(WalkingSpeedRandomizedEvent evt, ISession session) //added by Lars
+        {
+            string formattedMessage = string.Format("Movement Speed in KPH has been Randomized. Old Speed: {0:#.0}KPH New Speed: {1:#.0}KPH", evt.OldSpeed, evt.NewSpeed);
+            Logger.Write(session.Translation.GetTranslation(TranslationString.WalkingSpeedRandomized, formattedMessage), LogLevel.Info, ConsoleColor.Cyan);
+        }
         public void Listen(IEvent evt, ISession session)
         {
             dynamic eve = evt;

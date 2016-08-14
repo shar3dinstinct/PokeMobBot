@@ -64,7 +64,8 @@ namespace PoGo.PokeMobBot.Logic
         bool AutoUpdate { get; }
         bool TransferConfigAndAuthOnUpdate { get; }
         bool DumpPokemonStats { get; }
-        int AmountOfPokemonToDisplayOnStart { get; }
+        int AmountOfPokemonToDisplayOnStartCp { get; }
+        int AmountOfPokemonToDisplayOnStartIv { get; }
         bool StartupWelcomeDelay { get; }
         string TranslationLanguageCode { get; }
 
@@ -81,6 +82,22 @@ namespace PoGo.PokeMobBot.Logic
         int PokestopSkipLuckyNumber { get; }
         int PokestopSkipLuckyMin { get; }
         int PokestopSkipLuckyMax { get; }
+
+        //Walking Speed Randomization
+        bool RandomizeWalkingSpeed { get; }
+        bool RandomizeSpawnOnStart { get; }
+        double MinRandomizeWalkingSpeedInKph { get; }
+        double MaxRandomizeWalkingSpeedInKph { get; }
+        int MinutesUntilRandomizeWalkingSpeed { get; }
+
+        //MapzenAPI
+        bool UseMapzenApiElevation { get; }
+        string MapzenApiElevationKey { get; }
+
+        //delay randomization
+        bool ReRandomizeDelayOnStart { get; } //re-randomize delays on startup based on mindelay
+        int MinRandomizeDelayMilliseconds { get; }
+        int MaxRandomizeDelayMilliseconds { get; }
 
         //delays
         int DelayBetweenPlayerActions { get; }
@@ -115,6 +132,7 @@ namespace PoGo.PokeMobBot.Logic
         //transfer
         bool TransferDuplicatePokemon { get; }
         bool PrioritizeIvOverCp { get; }
+        bool PrioritizeBothIvAndCpForTransfer { get; }
         int KeepMinCp { get; }
         float KeepMinIvPercentage { get; }
         int KeepMinDuplicatePokemon { get; }
@@ -153,6 +171,8 @@ namespace PoGo.PokeMobBot.Logic
         double UseBerryBelowCatchProbability { get; }
 
         //favorite
+        bool AutoFavoritePokemon { get; }
+        float FavoriteMinIvPercentage { get; }
 
         //recycle
         bool AutomaticInventoryManagement { get; }
