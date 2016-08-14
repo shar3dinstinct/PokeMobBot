@@ -38,7 +38,9 @@ namespace PoGo.PokeMobBot.Logic
             {
                 Logger.Write("Routing error: " + ex.Message, LogLevel.Debug);
             }
-            return new RoutingResponse();  
+            RoutingResponse emptyResponse = new RoutingResponse();
+            emptyResponse.coordinates = new List<List<double>>();
+            return emptyResponse;  
         }
     }
 
