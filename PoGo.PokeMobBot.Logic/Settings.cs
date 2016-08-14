@@ -12,6 +12,7 @@ using POGOProtos.Enums;
 using POGOProtos.Inventory.Item;
 using System.Linq;
 using GeoCoordinatePortable;
+using PoGo.PokeMobBot.Logic.API;
 
 #endregion
 
@@ -133,6 +134,9 @@ namespace PoGo.PokeMobBot.Logic
     public class DeviceSettings
     {
 
+        private static Random random = new Random();
+        public static IDictionary<string, string> phone_item = RandomPhone();
+        #region DeviceSettingsTemplate
         //public string DeviceId = RandomString(16,"0123456789abcdef"); // "ro.build.id";
         //public string AndroidBoardName = "thunderc"; // "ro.product.board";
         //public string AndroidBootLoader = "unknown"; //"ro.product.bootloader; //I think
@@ -146,8 +150,30 @@ namespace PoGo.PokeMobBot.Logic
         //public string FirmwareTags = "test-keys"; //"build.tags";
         //public string FirmwareType = "eng"; //"build.type"; //iOS is "iOS version"
         //public string FirmwareFingerprint = "lge/lge_gelato/VM701:2.3.4/GRJ22/ZV4.19cd75186d:user/release-keys"; //"build.fingerprint";
-        public static IDictionary<string, string> phone_item = RandomPhone();
+        #endregion
+        #region New Format by Lars
+        /*
+        public string DeviceId = RandomString(16, "0123456789abcdef"); // "ro.build.id";
+        public string AndroidBoardName = phone_item["AndriodBoardName"]; // "ro.product.board";
+        public string AndroidBootLoader = phone_item["AndroidBootLoader"]; //"ro.product.bootloader; //I think
+        public string DeviceBrand = phone_item["DeviceBrand"];// "product.brand";
+        public string DeviceModel = phone_item["DeviceModel"]; //"product.device";
+        public string DeviceModelIdentifier = phone_item["DeviceModelIdentifier"] + "_" + RandomString(random.Next(4, 10), "0123456789abcdef");// "build.display.id";
+        public string DeviceModelBoot = phone_item["DeviceModelBoot"]; //"boot.hardware";
+        public string HardwareManufacturer = phone_item["DeviceModelBoot"]; //"product.manufacturer";
+        public string HardWareModel = phone_item["DeviceModelIdentifier"]; //"product.model";
+        public string FirmwareBrand = phone_item["DeviceModel"]; //"product.name"; //iOS is "iPhone OS"
+        public string FirmwareTags = "test-keys"; //"build.tags";
+        public string FirmwareType = "en"; //"build.type"; //iOS is "iOS version"
+        public string FirmwareFingerprint = phone_item["DeviceBrand"] + "/" + 
+                                                    phone_item["DeviceModel"] + "/" +
+                                                    phone_item["FirmwareBrand"] + ":" + 
+                                                    RandomAndroidVersion() + "/" +
+                                                    RandomString(random.Next(4, 10), "0123456789abcdef") + 
+                                                    ":user/release-keys";
 
+        */
+        #endregion
         public string DeviceId = RandomString(16, "0123456789abcdef"); // "ro.build.id";
         public string AndroidBoardName = phone_item["board"]; // "ro.product.board";
         public string AndroidBootLoader = "unknown"; //"ro.product.bootloader; //I think
@@ -162,19 +188,27 @@ namespace PoGo.PokeMobBot.Logic
         public string FirmwareType = "eng"; //"build.type"; //iOS is "iOS version"
         public string FirmwareFingerprint =
            phone_item["mft"] + "/" +
-            phone_item["mft"] + "_" + phone_item["board"] + "/" +
-            RandomString(random.Next(4, 10), "0123456789abcdef") + "/" +
-            ":user/" +
-            RandomString(random.Next(4, 10), "0123456789abcdef");
+            phone_item["mft"] + "_" + phone_item["board"] + ":" +
+                                                    RandomAndroidVersion() + "/" +
+                                                    RandomString(random.Next(4, 10), "0123456789abcdef") +
+                                                    ":user/release-keys";
 
 
-        private static Random random = new Random();
+
         private static string RandomString(int length, string chars)
         {
             return new string(Enumerable.Repeat(chars, length)
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
-
+        private static string RandomAndroidVersion()
+        {
+            //possible android versions based on PokemonGo requirements
+            List<string> possibleAndroidVersions = new List<string>() { "4.4", "4.4.1", "4.4.2", "4.4.3", "4.4.4", "5.0", "5.0.1", "5.0.2", "5.1", "5.1.1", "6.0", "6.0.1" };
+            //generate a random index to choose version
+            int index = random.Next(0, possibleAndroidVersions.Count);
+            //return random vserion
+            return possibleAndroidVersions[index];
+        }
         public static IDictionary<string, string> RandomPhone()
         {
             List<IDictionary<string, string>> phone_list = GetPhoneList();
@@ -840,23 +874,35 @@ namespace PoGo.PokeMobBot.Logic
 
     }
     public class DelaySettings
-    {//delays
-        public int DelayBetweenPlayerActions = 5;
-        public int DelayPositionCheckState = 200;
-        public int DelayPokestop = 1000;
-        public int DelayCatchPokemon = 5;
-        public int DelayBetweenPokemonCatch = 5;
-        public int DelayCatchNearbyPokemon = 5;
-        public int DelayCatchLurePokemon = 5;
-        public int DelayCatchIncensePokemon = 5;
-        public int DelayEvolvePokemon = 5;
+    {
+        [JsonIgnore]
+        private static Random r = new Random();
+        [JsonIgnore]
+        private static int FirstRunMin = 2141;
+        [JsonIgnore]
+        private static int FirstRunMax = 6736;
+
+        //delays
+        public int MinRandomizeDelayMilliseconds = FirstRunMin;
+        public int MaxRandomizeDelayMilliseconds = FirstRunMax;
+        public bool ReRandomizeDelayOnStart = true;
+        public int DelayBetweenPlayerActions = r.Next(FirstRunMin, FirstRunMax);
+        public int DelayPositionCheckState = r.Next(FirstRunMin, FirstRunMax);
+        public int DelayPokestop = r.Next(FirstRunMin, FirstRunMax);
+        public int DelayCatchPokemon = r.Next(FirstRunMin, FirstRunMax);
+        public int DelayBetweenPokemonCatch = r.Next(FirstRunMin, FirstRunMax);
+        public int DelayCatchNearbyPokemon = r.Next(FirstRunMin, FirstRunMax);
+        public int DelayCatchLurePokemon = r.Next(FirstRunMin, FirstRunMax);
+        public int DelayCatchIncensePokemon = r.Next(FirstRunMin, FirstRunMax);
+        //public int DelayEvolvePokemon = r.Next(FirstRunMin, FirstRunMax); //reports say this takes ~25seconds give or take.
+        public int DelayEvolvePokemon = r.Next(24000, 26000); //hardcoded to allow for maximum humanization
         public double DelayEvolveVariation = 0.3;
-        public int DelayTransferPokemon = 5;
-        public int DelayDisplayPokemon = 5;
-        public int DelayUseLuckyEgg = 5;
-        public int DelaySoftbanRetry = 5;
-        public int DelayRecyleItem = 5;
-        public int DelaySnipePokemon = 250;
+        public int DelayTransferPokemon = r.Next(FirstRunMin, FirstRunMax);
+        public int DelayDisplayPokemon = r.Next(FirstRunMin, FirstRunMax);
+        public int DelayUseLuckyEgg = r.Next(FirstRunMin, FirstRunMax);
+        public int DelaySoftbanRetry = r.Next(FirstRunMin, FirstRunMax);
+        public int DelayRecyleItem = r.Next(FirstRunMin, FirstRunMax);
+        public int DelaySnipePokemon = r.Next(FirstRunMin, FirstRunMax);
         public int MinDelayBetweenSnipes = 10000;
         public double SnipingScanOffset = 0.003;
     }
@@ -867,7 +913,8 @@ namespace PoGo.PokeMobBot.Logic
         public bool AutoUpdate = false;
         public bool TransferConfigAndAuthOnUpdate = true;
         public bool DumpPokemonStats = false;
-        public int AmountOfPokemonToDisplayOnStart = 10;
+        public int AmountOfPokemonToDisplayOnStartCp = 10;
+        public int AmountOfPokemonToDisplayOnStartIv = 10;
         public bool StartupWelcomeDelay = false;
         public string TranslationLanguageCode = "en";
         public int WebSocketPort = 14251;
@@ -893,6 +940,7 @@ namespace PoGo.PokeMobBot.Logic
         //transfer
         public bool TransferDuplicatePokemon = true;
         public bool PrioritizeIvOverCp = true;
+        public bool PrioritizeBothIvAndCpForTransfer = false;
         public int KeepMinCp = 2000;
         public float KeepMinIvPercentage = 97;
         public int KeepMinDuplicatePokemon = 1;
@@ -914,6 +962,8 @@ namespace PoGo.PokeMobBot.Logic
         //favorite
         public bool AutoFavoritePokemon = true;
         public float FavoriteMinIvPercentage = 98;
+
+        
     }
 
     public class LocationSettings
@@ -935,6 +985,15 @@ namespace PoGo.PokeMobBot.Logic
         public int PokestopSkipLuckyNumber = 1;
         public int PokestopSkipLuckyMin = 0;
         public int PokestopSkipLuckyMax = 4;
+        //random walking speed
+        public bool RandomizeWalkingSpeed = true;
+        public int MinutesUntilRandomizeWalkingSpeed = 5;
+        public double MinRandomizeWalkingSpeedInKph = 7;
+        public double MaxRandomizeWalkingSpeedInKph = 11;
+        //mapzen api
+        public bool RandomizeSpawnOnStart = true;
+        public bool UseMapzenApiElevation = true;
+        public string MapzenApiElevationKey = "";
     }
 
     public class CatchSettings
@@ -1027,7 +1086,9 @@ namespace PoGo.PokeMobBot.Logic
 
         public SnipeConfig SnipeSettings = new SnipeConfig();
 
+        public MapzenAPI MapzenAPI = new MapzenAPI();
 
+        private static Random random = new Random();
 
 
         public List<KeyValuePair<ItemId, int>> ItemRecycleFilter = new List<KeyValuePair<ItemId, int>>
@@ -1369,6 +1430,42 @@ namespace PoGo.PokeMobBot.Logic
                     jsonSettings.DefaultValueHandling = DefaultValueHandling.Populate;
 
                     settings = JsonConvert.DeserializeObject<GlobalSettings>(input, jsonSettings);
+                    if (settings.DelaySettings.ReRandomizeDelayOnStart)
+                    {
+                        settings.DelaySettings.DelayBetweenPlayerActions = random.Next(settings.DelaySettings.MinRandomizeDelayMilliseconds, settings.DelaySettings.MaxRandomizeDelayMilliseconds);
+                        settings.DelaySettings.DelayPositionCheckState = random.Next(settings.DelaySettings.MinRandomizeDelayMilliseconds, settings.DelaySettings.MaxRandomizeDelayMilliseconds);
+                        settings.DelaySettings.DelayPokestop = random.Next(settings.DelaySettings.MinRandomizeDelayMilliseconds, settings.DelaySettings.MaxRandomizeDelayMilliseconds);
+                        settings.DelaySettings.DelayCatchPokemon = random.Next(settings.DelaySettings.MinRandomizeDelayMilliseconds, settings.DelaySettings.MaxRandomizeDelayMilliseconds);
+                        settings.DelaySettings.DelayBetweenPokemonCatch = random.Next(settings.DelaySettings.MinRandomizeDelayMilliseconds, settings.DelaySettings.MaxRandomizeDelayMilliseconds);
+                        settings.DelaySettings.DelayCatchNearbyPokemon = random.Next(settings.DelaySettings.MinRandomizeDelayMilliseconds, settings.DelaySettings.MaxRandomizeDelayMilliseconds);
+                        settings.DelaySettings.DelayCatchLurePokemon = random.Next(settings.DelaySettings.MinRandomizeDelayMilliseconds, settings.DelaySettings.MaxRandomizeDelayMilliseconds);
+                        settings.DelaySettings.DelayCatchIncensePokemon = random.Next(settings.DelaySettings.MinRandomizeDelayMilliseconds, settings.DelaySettings.MaxRandomizeDelayMilliseconds);
+                        settings.DelaySettings.DelayEvolvePokemon = random.Next(settings.DelaySettings.MinRandomizeDelayMilliseconds, settings.DelaySettings.MaxRandomizeDelayMilliseconds);
+                        settings.DelaySettings.DelayTransferPokemon = random.Next(settings.DelaySettings.MinRandomizeDelayMilliseconds, settings.DelaySettings.MaxRandomizeDelayMilliseconds);
+                        settings.DelaySettings.DelayDisplayPokemon = random.Next(settings.DelaySettings.MinRandomizeDelayMilliseconds, settings.DelaySettings.MaxRandomizeDelayMilliseconds);
+                        settings.DelaySettings.DelayUseLuckyEgg = random.Next(settings.DelaySettings.MinRandomizeDelayMilliseconds, settings.DelaySettings.MaxRandomizeDelayMilliseconds);
+                        settings.DelaySettings.DelaySoftbanRetry = random.Next(settings.DelaySettings.MinRandomizeDelayMilliseconds, settings.DelaySettings.MaxRandomizeDelayMilliseconds);
+                        settings.DelaySettings.DelayRecyleItem = random.Next(settings.DelaySettings.MinRandomizeDelayMilliseconds, settings.DelaySettings.MaxRandomizeDelayMilliseconds);
+                        settings.DelaySettings.DelaySnipePokemon = random.Next(settings.DelaySettings.MinRandomizeDelayMilliseconds, settings.DelaySettings.MaxRandomizeDelayMilliseconds);
+                    }
+                    if (settings.LocationSettings.UseMapzenApiElevation)
+                    {
+                        string possiblePath = Path.Combine(Directory.GetCurrentDirectory(), "MapzenAPI/" + settings.LocationSettings.DefaultLatitude.ToString().Replace(".", ",") + "_" + settings.LocationSettings.DefaultLongitude.ToString().Replace(".", ",") + ".json");
+                        if (settings.MapzenAPI.checkForExistingAltitude(possiblePath))
+                        {
+                            settings.LocationSettings.DefaultAltitude = settings.MapzenAPI.getExistingAltitude(possiblePath);
+                        }
+                        else if (!settings.LocationSettings.MapzenApiElevationKey.Equals(""))
+                        {
+                            settings.LocationSettings.DefaultAltitude = settings.MapzenAPI.getAltitude(settings.LocationSettings.DefaultLatitude,
+                                                                                                    settings.LocationSettings.DefaultLongitude,
+                                                                                                    settings.LocationSettings.MapzenApiElevationKey);
+                        }
+                        else
+                        {
+                            Logger.Write("No MapzenAPIElevationKey? (Check LocationSettings)");
+                        }
+                    }
                 }
                 catch (JsonReaderException exception)
                 {
@@ -1465,7 +1562,14 @@ namespace PoGo.PokeMobBot.Logic
         {
             get
             {
-                return _settings.LocationSettings.DefaultLatitude + _rand.NextDouble() * ((double)_settings.LocationSettings.MaxSpawnLocationOffset / 111111);
+                if (_settings.LocationSettings.RandomizeSpawnOnStart)
+                {
+                    return _settings.LocationSettings.DefaultLatitude + _rand.NextDouble() * ((double)_settings.LocationSettings.MaxSpawnLocationOffset / 111111);
+                }
+                else
+                {
+                    return _settings.LocationSettings.DefaultLatitude;
+                }
             }
 
             set { _settings.LocationSettings.DefaultLatitude = value; }
@@ -1475,9 +1579,16 @@ namespace PoGo.PokeMobBot.Logic
         {
             get
             {
-                return _settings.LocationSettings.DefaultLongitude +
+                if (_settings.LocationSettings.RandomizeSpawnOnStart)
+                {
+                    return _settings.LocationSettings.DefaultLongitude +
                        _rand.NextDouble() *
                        ((double)_settings.LocationSettings.MaxSpawnLocationOffset / 111111 / Math.Cos(_settings.LocationSettings.DefaultLatitude));
+                }
+                else
+                {
+                    return _settings.LocationSettings.DefaultLongitude;
+                }
             }
 
             set { _settings.LocationSettings.DefaultLongitude = value; }
@@ -1663,7 +1774,8 @@ namespace PoGo.PokeMobBot.Logic
         public float FavoriteMinIvPercentage => _settings.PokemonSettings.FavoriteMinIvPercentage;
         public bool AutoFavoritePokemon => _settings.PokemonSettings.AutoFavoritePokemon;
         public string RenameTemplate => _settings.PokemonSettings.RenameTemplate;
-        public int AmountOfPokemonToDisplayOnStart => _settings.StartUpSettings.AmountOfPokemonToDisplayOnStart;
+        public int AmountOfPokemonToDisplayOnStartCp => _settings.StartUpSettings.AmountOfPokemonToDisplayOnStartCp;
+        public int AmountOfPokemonToDisplayOnStartIv => _settings.StartUpSettings.AmountOfPokemonToDisplayOnStartIv;
         public bool DisplayPokemonMaxPoweredCp => _settings.StartUpSettings.DisplayPokemonMaxPoweredCp;
         public bool DisplayPokemonMovesetRank => _settings.StartUpSettings.DisplayPokemonMovesetRank;
         public bool DumpPokemonStats => _settings.StartUpSettings.DumpPokemonStats;
@@ -1735,6 +1847,18 @@ namespace PoGo.PokeMobBot.Logic
         public bool CatchWildPokemon => _settings.CatchSettings.CatchWildPokemon;
 
         public bool UseHumanPathing => _settings.StartUpSettings.UseHumanPathing;
+
+        public bool RandomizeSpawnOnStart => _settings.LocationSettings.RandomizeSpawnOnStart;
+        public bool RandomizeWalkingSpeed => _settings.LocationSettings.RandomizeWalkingSpeed;
+        public bool UseMapzenApiElevation => _settings.LocationSettings.UseMapzenApiElevation;
+        public string MapzenApiElevationKey => _settings.LocationSettings.MapzenApiElevationKey;
+        public int MinutesUntilRandomizeWalkingSpeed => _settings.LocationSettings.MinutesUntilRandomizeWalkingSpeed;
+        public double MaxRandomizeWalkingSpeedInKph => _settings.LocationSettings.MaxRandomizeWalkingSpeedInKph;
+        public double MinRandomizeWalkingSpeedInKph => _settings.LocationSettings.MinRandomizeWalkingSpeedInKph;
+        public bool PrioritizeBothIvAndCpForTransfer => _settings.PokemonSettings.PrioritizeBothIvAndCpForTransfer;
+        public int MinRandomizeDelayMilliseconds => _settings.DelaySettings.MinRandomizeDelayMilliseconds;
+        public int MaxRandomizeDelayMilliseconds => _settings.DelaySettings.MaxRandomizeDelayMilliseconds;
+        public bool ReRandomizeDelayOnStart => _settings.DelaySettings.ReRandomizeDelayOnStart;
 
     }
 

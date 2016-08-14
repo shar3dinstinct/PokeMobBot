@@ -53,13 +53,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API\MapzenAPI.cs" />
     <Compile Include="Common\ApiFailureStrategy.cs" />
     <Compile Include="DataDumper\IDumper.cs" />
     <Compile Include="DataDumper\Dumper.cs" />
     <Compile Include="Common\Translations.cs" />
     <Compile Include="Event\DebugEvent.cs" />
+    <Compile Include="Event\InvalidKeepAmountEvent.cs" />
     <Compile Include="Event\PlayerLevelUpEvent.cs" />
+    <Compile Include="Event\PokemonFavoriteEvent.cs" />
     <Compile Include="Event\PokemonSettingsEvent.cs" />
+    <Compile Include="Event\PokemonUnFavoriteEvent.cs" />
     <Compile Include="Event\UseLuckyEggMinPokemonEvent.cs" />
     <Compile Include="Event\DisplayHighestsPokemonEvent.cs" />
     <Compile Include="Event\EggHatchedEvent.cs" />
@@ -83,6 +87,7 @@
     <Compile Include="Event\UpdatePositionEvent.cs" />
     <Compile Include="Event\UseBerryEvent.cs" />
     <Compile Include="Event\EggIncubatorStatusEvent.cs" />
+    <Compile Include="Event\WalkingSpeedRandomizedEvent.cs" />
     <Compile Include="Extensions\RandomExtensions.cs" />
     <Compile Include="MapCache.cs" />
     <Compile Include="Inventory.cs" />
@@ -97,6 +102,7 @@
     <Compile Include="Routing.cs" />
     <Compile Include="Service\BotService.cs" />
     <Compile Include="Tasks\EvolveSpecificPokemonTask.cs" />
+    <Compile Include="Tasks\FavoritePokemonTask.cs" />
     <Compile Include="Tasks\PlayerStatsTask .cs" />
     <Compile Include="Tasks\EggsListTask.cs" />
     <Compile Include="Tasks\InventoryListTask.cs" />

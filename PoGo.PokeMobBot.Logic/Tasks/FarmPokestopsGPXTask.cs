@@ -142,7 +142,7 @@ namespace PoGo.PokeMobBot.Logic.Tasks
                 Convert.ToDouble(trackPoints.ElementAt(curTrkPt).Lon, CultureInfo.InvariantCulture));
 
                         Navigation navi = new Navigation(session.Client);
-                        await navi.HumanPathWalking(
+                        await navi.HumanPathWalking(session,
                             targetLocation,
                             session.LogicSettings.WalkingSpeedInKilometerPerHour,
                             async () =>

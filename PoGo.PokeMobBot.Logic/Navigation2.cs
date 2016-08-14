@@ -110,7 +110,7 @@ namespace PoGo.PokeMobBot.Logic
                         continue;
 
                     result = await
-                        navi.HumanPathWalking(waypoints.ToArray()[x],
+                        navi.HumanPathWalking(session, waypoints.ToArray()[x],
                             session.LogicSettings.WalkingSpeedInKilometerPerHour,
                             functionExecutedWhileWalking, functionExecutedWhileWalking2, cancellationToken);
                     if (RuntimeSettings.BreakOutOfPathing)
@@ -121,7 +121,7 @@ namespace PoGo.PokeMobBot.Logic
                 var curcoord = new GeoCoordinate(session.Client.CurrentLatitude, session.Client.CurrentLongitude);
                 if (LocationUtils.CalculateDistanceInMeters(curcoord, destination) > 40)
                 {
-                    result = await navi.HumanPathWalking(destination, session.LogicSettings.WalkingSpeedInKilometerPerHour,
+                    result = await navi.HumanPathWalking(session, destination, session.LogicSettings.WalkingSpeedInKilometerPerHour,
                         functionExecutedWhileWalking, functionExecutedWhileWalking2, cancellationToken);
                 }
 
@@ -230,7 +230,7 @@ namespace PoGo.PokeMobBot.Logic
                 var curcoord = new GeoCoordinate(session.Client.CurrentLatitude, session.Client.CurrentLongitude);
                 if (LocationUtils.CalculateDistanceInMeters(curcoord, destination) > 40)
                 {
-                    result = await navi.HumanPathWalking(destination, session.LogicSettings.WalkingSpeedInKilometerPerHour,
+                    result = await navi.HumanPathWalking(session, destination, session.LogicSettings.WalkingSpeedInKilometerPerHour,
                         functionExecutedWhileWalking, functionExecutedWhileWalking2, cancellationToken);
                 }
             }

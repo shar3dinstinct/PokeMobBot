@@ -151,7 +151,13 @@ namespace PoGo.PokeMobBot.Logic.Common
         WebErrorGatewayTimeout,
         WebErrorBadGateway,
         SkipLaggedTimeout,
-        SkipLaggedMaintenance
+        SkipLaggedMaintenance,
+        CheckingForMaximumInventorySize, //added by Lars
+        LogEntryFavorite, //added by Lars
+        LogEntryUnFavorite, //added by Lars
+        PokemonFavorite, //added by Lars
+        PokemonUnFavorite, //added by Lars
+        WalkingSpeedRandomized //added by Lars
     }
 
     public class Translation : ITranslation
@@ -214,7 +220,7 @@ namespace PoGo.PokeMobBot.Logic.Common
             new KeyValuePair<TranslationString, string>(TranslationString.DisplayHighestsLevelHeader,
                 "DisplayHighestsLevel"),
             new KeyValuePair<TranslationString, string>(TranslationString.WelcomeWarning,
-                "Make sure Lat & Lng are right. Exit Program if not! Lat: {0} Lng: {1}"),
+                "Make sure Lat & Lng are right. Exit Program if not! Lat: {0} Lng: {1} Alt: {2}"),
             new KeyValuePair<TranslationString, string>(TranslationString.IncubatorPuttingEgg,
                 "Putting egg in incubator: {0:0.00}km left"),
             new KeyValuePair<TranslationString, string>(TranslationString.IncubatorStatusUpdate,
@@ -376,7 +382,14 @@ namespace PoGo.PokeMobBot.Logic.Common
             new KeyValuePair<TranslationString, string>(TranslationString.SkipLaggedTimeout,
                 "SkipLagged is down or SnipeRequestTimeoutSeconds is too small!"),
             new KeyValuePair<TranslationString, string>(TranslationString.SkipLaggedMaintenance,
-                "SkipLagged servers are down for maintenance.")
+                "SkipLagged servers are down for maintenance."),
+            new KeyValuePair<TranslationString, string>(TranslationString.CheckingForMaximumInventorySize, // added by Lars
+                "[Inventory] Items to Keep exceeds maximum inventory size! {0}/{1}"),
+            new KeyValuePair<TranslationString, string>(TranslationString.LogEntryFavorite, "FAVORITE"), // added by Lars
+            new KeyValuePair<TranslationString, string>(TranslationString.LogEntryUnFavorite, "UNFAVORITE"), // added by Lars
+            new KeyValuePair<TranslationString, string>(TranslationString.PokemonFavorite, "{0}"), //pre-formatted - added by Lars
+            new KeyValuePair<TranslationString, string>(TranslationString.PokemonUnFavorite, "{0}"), //pre-formatted - added by Lars
+            new KeyValuePair<TranslationString, string>(TranslationString.WalkingSpeedRandomized, "{0}") //pre-formatted - added by Lars
         };
 
         [JsonProperty("Pokemon",
