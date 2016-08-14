@@ -36,7 +36,7 @@ namespace PoGo.PokeMobBot.CLI
                 Certificate = new CertificateConfig
                 {
                     FilePath = @"cert.pfx",
-                    Password = "necro"
+                    Password = "pokemobbot"
                 },
             };
             config.Listeners = new List<ListenerConfig>
@@ -94,6 +94,7 @@ namespace PoGo.PokeMobBot.CLI
         {
             Models.SocketMessage msgObj = null;
             var command = message;
+            Console.WriteLine(message);
             try
             {
                 msgObj = JsonConvert.DeserializeObject<Models.SocketMessage>(message);
