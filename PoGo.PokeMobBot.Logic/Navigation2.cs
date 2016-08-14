@@ -35,29 +35,29 @@ namespace PoGo.PokeMobBot.Logic
         public async Task<PlayerUpdateResponse> Move(GeoCoordinate destination, double walkingSpeedInKilometersPerHour, Func<Task<bool>> functionExecutedWhileWalking, Func<Task<bool>> functionExecutedWhileWalking2,
             CancellationToken cancellationToken, ISession session)
         {
-            //double metersPerInterval = 0.5; //approximate meters for each interval/waypoint to be spaced from the last.
+            
 
             ////initial coordinate generaton
             GeoCoordinate currentLocation = new GeoCoordinate(_client.CurrentLatitude, _client.CurrentLongitude, _client.CurrentAltitude);
             ////prepare the result object for further manipulation + return
             PlayerUpdateResponse result = new PlayerUpdateResponse();
-            ////get distance ofc
-            //var distanceToTarget = LocationUtils.CalculateDistanceInMeters(currentLocation, destination);
+            
             ////initial time
             //var requestSendDateTime = DateTime.Now;
-
-
-            ////create segments
-            //var segments = Math.Floor(distanceToTarget / metersPerInterval);
+            //var distanceToDest = LocationUtils.CalculateDistanceInMeters(currentLocation, destination);
+            //double metersPerInterval = 0.5; //approximate meters for each interval/waypoint to be spaced from the last.
+            //////get distance ofc
+            //////create segments
+            //var segments = Math.Floor(distanceToDest / metersPerInterval);
             List<GeoCoordinate> waypoints = new List<GeoCoordinate>();
-            //get differences in lat/long
+            ////get differences in lat / long
             //var latDiff = Math.Abs(currentLocation.Latitude - destination.Latitude);
             //var lonDiff = Math.Abs(currentLocation.Longitude - destination.Longitude);
             //var latAdd = latDiff / segments;
             //var lonAdd = latDiff / segments;
             //var lastLat = currentLocation.Latitude;
             //var lastLon = currentLocation.Longitude;
-            //generate waypoints old code - goes in straight line basically
+            ////generate waypoints old code -goes in straight line basically
             //for (int i = 0; i < segments; i++)
             //{
             //    //TODO: add altitude calculations into everything

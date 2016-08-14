@@ -16,6 +16,7 @@ namespace PoGo.PokeMobBot.Logic.State
         Client Client { get; }
         GetPlayerResponse Profile { get; set; }
         HumanNavigation Navigation { get; }
+        MapCache MapCache { get; }
         ILogicSettings LogicSettings { get; }
         ITranslation Translation { get; }
         IEventDispatcher EventDispatcher { get; }
@@ -43,6 +44,7 @@ namespace PoGo.PokeMobBot.Logic.State
         public GetPlayerResponse Profile { get; set; }
         public HumanNavigation Navigation { get; private set; }
 
+        public MapCache MapCache { get; private set; }
         public ILogicSettings LogicSettings { get; }
 
         public ITranslation Translation { get; }
@@ -57,6 +59,7 @@ namespace PoGo.PokeMobBot.Logic.State
             // ferox wants us to set this manually
             Inventory = new Inventory(Client, logicSettings);
             Navigation = new HumanNavigation(Client);
+            MapCache = new MapCache();
         }
     }
 }

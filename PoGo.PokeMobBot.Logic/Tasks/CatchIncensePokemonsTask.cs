@@ -33,7 +33,8 @@ namespace PoGo.PokeMobBot.Logic.Tasks
             var incensePokemon = await session.Client.Map.GetIncensePokemons();
             if (incensePokemon.Result == GetIncensePokemonResponse.Types.Result.IncenseEncounterAvailable)
             {
-                var pokemon = new MapPokemon
+
+                var _pokemon = new MapPokemon
                 {
                     EncounterId = incensePokemon.EncounterId,
                     ExpirationTimestampMs = incensePokemon.DisappearTimestampMs,
@@ -42,7 +43,7 @@ namespace PoGo.PokeMobBot.Logic.Tasks
                     PokemonId = incensePokemon.PokemonId,
                     SpawnPointId = incensePokemon.EncounterLocation
                 };
-
+                var pokemon = new PokemonCacheItem(_pokemon);
                 if (session.LogicSettings.UsePokemonToNotCatchFilter &&
                     session.LogicSettings.PokemonsNotToCatch.Contains(pokemon.PokemonId))
                 {

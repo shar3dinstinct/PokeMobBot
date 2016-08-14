@@ -1,5 +1,6 @@
 ﻿#region using directives
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -109,16 +110,11 @@ namespace PoGo.PokeMobBot.Logic.Tasks
             }
         }
 
-        private static async Task<IOrderedEnumerable<MapPokemon>> GetNearbyPokemons(ISession session)
+        private static async Task<List<PokemonCacheItem>> GetNearbyPokemons(ISession session)
         {
-            var mapObjects = await session.Client.Map.GetMapObjects();
+            //var mapObjects = await session.Client.Map.GetMapObjects();
 
-            var pokemons = mapObjects.MapCells.SelectMany(i => i.CatchablePokemons)
-                .OrderBy(
-                    i =>
-                        LocationUtils.CalculateDistanceInMeters(session.Client.CurrentLatitude,
-                            session.Client.CurrentLongitude,
-                            i.Latitude, i.Longitude));
+            var pokemons = await session.MapCache.MapPokemons(session);
 
             return pokemons;
         }

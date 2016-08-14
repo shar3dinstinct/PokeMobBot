@@ -26,6 +26,7 @@ namespace PoGo.PokeMobBot.Logic.Tasks
 
         public static async Task Execute(ISession session, CancellationToken cancellationToken)
         {
+            
             Random random = new Random();
             if (session.LogicSettings.Teleport)
                 await Teleport(session, cancellationToken, random);
@@ -83,7 +84,7 @@ namespace PoGo.PokeMobBot.Logic.Tasks
                         });
                     }
 
-                    session.EventDispatcher.Send(new PokeStopListEvent { Forts = pokestopList });
+                    session.EventDispatcher.Send(new PokeStopListEvent { Forts = session.MapCache.baseFortDatas.ToList() });
 
                     cancellationToken.ThrowIfCancellationRequested();
 
@@ -225,7 +226,7 @@ namespace PoGo.PokeMobBot.Logic.Tasks
                     {
                         if (pokeStop.LureInfo != null)
                         {
-                            await CatchLurePokemonsTask.Execute(session, pokeStop, cancellationToken);
+                            await CatchLurePokemonsTask.Execute(session, pokeStop.BaseFortData, cancellationToken);
                         }
                         // Catch normal map Pokemon
                         if (session.LogicSettings.Teleport)
@@ -454,7 +455,7 @@ namespace PoGo.PokeMobBot.Logic.Tasks
                 {
                     if (pokeStop.LureInfo != null)
                     {
-                        await CatchLurePokemonsTask.Execute(session, pokeStop, cancellationToken);
+                        await CatchLurePokemonsTask.Execute(session, pokeStop.BaseFortData, cancellationToken);
                     }
                     if (session.LogicSettings.Teleport)
                         await CatchNearbyPokemonsTask.Execute(session, cancellationToken);
@@ -503,45 +504,43 @@ namespace PoGo.PokeMobBot.Logic.Tasks
             }
         }
 
-        private static async Task<List<FortData>> GetPokeStops(ISession session)
+        private static async Task<List<FortCacheItem>> GetPokeStops(ISession session)
         {
-            var mapObjects = await session.Client.Map.GetMapObjects();
+            //var mapObjects = await session.Client.Map.GetMapObjects();
 
-            var pokeStops = mapObjects.MapCells.SelectMany(i => i.Forts);
+            List<FortCacheItem> pokeStops = await session.MapCache.FortDatas(session);
 
-            session.EventDispatcher.Send(new PokeStopListEvent { Forts = pokeStops.ToList() });
+            session.EventDispatcher.Send(new PokeStopListEvent { Forts = session.MapCache.baseFortDatas.ToList() });
 
             // Wasn't sure how to make this pretty. Edit as needed.
             if (session.LogicSettings.Teleport)
             {
-                pokeStops = mapObjects.MapCells.SelectMany(i => i.Forts)
-                    .Where(
-                        i =>
-                            i.Type == FortType.Checkpoint &&
-                            i.CooldownCompleteTimestampMs < DateTime.UtcNow.ToUnixTime() &&
-                            ( // Make sure PokeStop is within max travel distance, unless it's set to 0.
-                                LocationUtils.CalculateDistanceInMeters(
-                                    session.Client.CurrentLatitude, session.Client.CurrentLongitude,
-                                    i.Latitude, i.Longitude) < session.LogicSettings.MaxTravelDistanceInMeters) ||
-                            session.LogicSettings.MaxTravelDistanceInMeters == 0
-                    );
+                pokeStops = pokeStops.Where(
+                    i =>
+                        i.Type == FortType.Checkpoint &&
+                        i.CooldownCompleteTimestampMS < DateTime.UtcNow.ToUnixTime() &&
+                        ( // Make sure PokeStop is within max travel distance, unless it's set to 0.
+                            LocationUtils.CalculateDistanceInMeters(
+                                session.Client.CurrentLatitude, session.Client.CurrentLongitude,
+                                i.Latitude, i.Longitude) < session.LogicSettings.MaxTravelDistanceInMeters) ||
+                        session.LogicSettings.MaxTravelDistanceInMeters == 0
+                    ).ToList();
             }
             else
             {
-                pokeStops = mapObjects.MapCells.SelectMany(i => i.Forts)
-                    .Where(
+                pokeStops = pokeStops.Where(
                         i =>
                             i.Type == FortType.Checkpoint &&
-                            i.CooldownCompleteTimestampMs < DateTime.UtcNow.ToUnixTime() &&
+                            i.CooldownCompleteTimestampMS < DateTime.UtcNow.ToUnixTime() &&
                             ( // Make sure PokeStop is within max travel distance, unless it's set to 0.
                                 LocationUtils.CalculateDistanceInMeters(
                                     session.Settings.DefaultLatitude, session.Settings.DefaultLongitude,
                                     i.Latitude, i.Longitude) < session.LogicSettings.MaxTravelDistanceInMeters) ||
                             session.LogicSettings.MaxTravelDistanceInMeters == 0
-                    );
+                    ).ToList();
             }
 
-            return pokeStops.ToList();
+            return pokeStops;
         }
 
         // static copy of download profile, to update stardust more accurately

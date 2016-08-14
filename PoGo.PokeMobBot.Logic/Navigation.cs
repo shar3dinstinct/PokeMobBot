@@ -169,16 +169,10 @@ namespace PoGo.PokeMobBot.Logic
 
                 UpdatePositionEvent?.Invoke(waypoint.Latitude, waypoint.Longitude);
 
-                if (functionExecutedWhileWalking != null || functionExecutedWhileWalking2 != null)
-                {
-                    if (RuntimeSettings.CheckScan())
-                    {
-                        if(functionExecutedWhileWalking != null)
-                            await functionExecutedWhileWalking(); // look for pokemon & hit stops
-                        if (functionExecutedWhileWalking2 != null) 
-                            await functionExecutedWhileWalking2();
-                    }
-                }
+                if (functionExecutedWhileWalking != null)
+                    await functionExecutedWhileWalking(); // look for pokemon & hit stops
+                if(functionExecutedWhileWalking2 != null)
+                    await functionExecutedWhileWalking2();
 
                 //await Task.Delay(100, cancellationToken);
             } while (LocationUtils.CalculateDistanceInMeters(sourceLocation, targetLocation) >= 2);

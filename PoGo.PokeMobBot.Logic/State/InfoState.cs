@@ -20,7 +20,7 @@ namespace PoGo.PokeMobBot.Logic.State
 
             if (session.LogicSettings.AmountOfPokemonToDisplayOnStart > 0)
                 await DisplayPokemonStatsTask.Execute(session);
-
+            await session.MapCache.UpdateMapDatas(session);
             return new FarmState();
         }
     }

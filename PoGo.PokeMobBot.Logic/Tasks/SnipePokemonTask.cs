@@ -292,8 +292,9 @@ namespace PoGo.PokeMobBot.Logic.Tasks
             await session.Client.Player.UpdatePlayerLocation(CurrentLatitude, CurrentLongitude,
                 session.Client.CurrentAltitude);
 
-            foreach (var pokemon in catchablePokemon)
+            foreach (var _pokemon in catchablePokemon)
             {
+                var pokemon = new PokemonCacheItem(_pokemon);
                 cancellationToken.ThrowIfCancellationRequested();
 
                 EncounterResponse encounter;
