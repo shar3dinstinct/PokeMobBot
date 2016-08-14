@@ -11,6 +11,7 @@ using PokemonGo.RocketAPI.Enums;
 using POGOProtos.Enums;
 using POGOProtos.Inventory.Item;
 using System.Linq;
+using GeoCoordinatePortable;
 
 #endregion
 
@@ -105,7 +106,10 @@ namespace PoGo.PokeMobBot.Logic
         public static DateTime startTime = DateTime.Now;
         public static bool DelayingScan = false;
         public static int PokemonScanDelay = 10000;// in ms
-
+        public static bool BreakOutOfPathing = false;
+        public static string lastPokeStopId = "69694201337";
+        public static string TargetStopID = "420Ayylmao";
+        public static GeoCoordinatePortable.GeoCoordinate lastPokeStopCoordinate = new GeoCoordinate(0,0);
         public static bool CheckScan()
         {
             if (DelayingScan)
@@ -870,6 +874,8 @@ namespace PoGo.PokeMobBot.Logic
         //display
         public bool DisplayPokemonMaxPoweredCp = true;
         public bool DisplayPokemonMovesetRank = true;
+
+        public bool UseHumanPathing = true;
     }
 
     public class PokemonConfig
@@ -1727,6 +1733,8 @@ namespace PoGo.PokeMobBot.Logic
         public double UseBerryBelowCatchProbability => _settings.CatchSettings.UseBerryBelowCatchProbability;
 
         public bool CatchWildPokemon => _settings.CatchSettings.CatchWildPokemon;
+
+        public bool UseHumanPathing => _settings.StartUpSettings.UseHumanPathing;
 
     }
 

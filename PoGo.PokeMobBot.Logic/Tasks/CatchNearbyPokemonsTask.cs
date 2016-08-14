@@ -102,10 +102,7 @@ namespace PoGo.PokeMobBot.Logic.Tasks
                 // If pokemon is not last pokemon in list, create delay between catches, else keep moving.
                 if (!Equals(pokemons.ElementAtOrDefault(pokemons.Count() - 1), pokemon))
                 {
-                    if(session.LogicSettings.Teleport)
                         await Task.Delay(session.LogicSettings.DelayBetweenPokemonCatch);
-                    else
-                        await Task.Delay(session.LogicSettings.DelayBetweenPokemonCatch, cancellationToken);
                 }
             }
         }

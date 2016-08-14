@@ -100,6 +100,7 @@ namespace PoGo.PokeMobBot.Logic.Tasks
                                     Latitude = pokeStop.Latitude,
                                     Longitude = pokeStop.Longitude
                                 });
+                                session.MapCache.UsedPokestop(pokeStop);
                             }
                             if (fortSearch.ItemsAwarded.Count > 0)
                             {
@@ -187,7 +188,7 @@ namespace PoGo.PokeMobBot.Logic.Tasks
             // Wasn't sure how to make this pretty. Edit as needed.
             pokeStops = pokeStops.Where(
                 i =>
-                    i.Type == FortType.Checkpoint &&
+                    i.Used == false && i.Type == FortType.Checkpoint &&
                     i.CooldownCompleteTimestampMS < DateTime.UtcNow.ToUnixTime() &&
                     ( // Make sure PokeStop is within 40 meters or else it is pointless to hit it
                         LocationUtils.CalculateDistanceInMeters(

@@ -30,10 +30,7 @@ namespace PoGo.PokeMobBot.Logic.Tasks
                 cancellationToken.ThrowIfCancellationRequested();
                 await session.Client.Inventory.RecycleItem(item.ItemId, item.Count);
                 session.EventDispatcher.Send(new ItemRecycledEvent { Id = item.ItemId, Count = item.Count });
-                if (session.LogicSettings.Teleport)
                     await Task.Delay(session.LogicSettings.DelayRecyleItem);
-                else
-                    await DelayingUtils.Delay(session.LogicSettings.DelayBetweenPlayerActions, 500);
             }
 
             await OptimizedRecycleBalls(session, cancellationToken);
@@ -307,10 +304,7 @@ namespace PoGo.PokeMobBot.Logic.Tasks
                 cancellationToken.ThrowIfCancellationRequested();
                 await session.Client.Inventory.RecycleItem(item, itemsToRecycle);
                 session.EventDispatcher.Send(new ItemRecycledEvent { Id = item, Count = itemsToRecycle });
-                if (session.LogicSettings.Teleport)
                     await Task.Delay(session.LogicSettings.DelayRecyleItem);
-                else
-                    await DelayingUtils.Delay(session.LogicSettings.DelayBetweenPlayerActions, 500);
             }
         }
     }

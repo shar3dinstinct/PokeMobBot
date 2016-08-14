@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GeoCoordinatePortable;
 using Google.Protobuf;
 using PoGo.PokeMobBot.Logic.Event;
 using PoGo.PokeMobBot.Logic.State;
@@ -119,6 +120,23 @@ namespace PoGo.PokeMobBot.Logic
             return _FortDatas;
         }
 
+        public void UsedPokestop(FortCacheItem stop)
+        {
+            foreach(FortCacheItem result in _FortDatas)
+            {
+                if (result.Id == stop.Id)
+                {
+                    result.Used = true;
+                    result.CooldownCompleteTimestampMS = DateTime.Now.AddMinutes(5).ToUnixTime();
+                    RuntimeSettings.lastPokeStopId = stop.Id;
+                    RuntimeSettings.lastPokeStopCoordinate = new GeoCoordinate(stop.Latitude, stop.Longitude);
+                    if (RuntimeSettings.TargetStopID == stop.Id)
+                        RuntimeSettings.BreakOutOfPathing = true;
+                }
+
+            }
+        }
+
     }
 
     public class PokemonCacheItem
@@ -161,6 +179,7 @@ namespace PoGo.PokeMobBot.Logic
         public FortType Type;
         public FortSponsor Sponsor;
         public FortData BaseFortData;
+        public bool Used = false;
 
         public FortCacheItem(FortData fort)
         {
@@ -180,5 +199,7 @@ namespace PoGo.PokeMobBot.Logic
             Sponsor = fort.Sponsor;
             BaseFortData = fort;
         }
+
+        
     }
 }

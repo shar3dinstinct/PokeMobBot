@@ -56,10 +56,7 @@ namespace PoGo.PokeMobBot.Logic.Tasks
                 {
                     var distance = LocationUtils.CalculateDistanceInMeters(session.Client.CurrentLatitude,
                         session.Client.CurrentLongitude, pokemon.Latitude, pokemon.Longitude);
-                    if(session.LogicSettings.Teleport)
                         await Task.Delay(session.LogicSettings.DelayCatchIncensePokemon);
-                    else
-                        await Task.Delay(distance > 100 ? 3000 : 500, cancellationToken);
 
                     var encounter =
                         await

@@ -45,10 +45,7 @@ namespace PoGo.PokeMobBot.Logic.Tasks
                     DisplayPokemonMaxPoweredCp = session.LogicSettings.DisplayPokemonMaxPoweredCp,
                     DisplayPokemonMovesetRank = session.LogicSettings.DisplayPokemonMovesetRank
                 });
-            if (session.LogicSettings.Teleport)
                 await Task.Delay(session.LogicSettings.DelayDisplayPokemon);
-            else
-                await Task.Delay(500);
 
             session.EventDispatcher.Send(
                 new DisplayHighestsPokemonEvent
@@ -79,10 +76,7 @@ namespace PoGo.PokeMobBot.Logic.Tasks
                 Dumper.Dump(session, toDumpTXT, dumpFileName);
                 Dumper.Dump(session, toDumpCSV, dumpFileName, "csv");
             }
-            if (session.LogicSettings.Teleport)
                 await Task.Delay(session.LogicSettings.DelayDisplayPokemon);
-            else
-                await Task.Delay(500);
         }
     }
 }

@@ -47,6 +47,7 @@ namespace PoGo.PokeMobBot.Logic.Tasks
             var pokestopList = await GetPokeStops(session);
             for (int stopsHit = 0; stopsHit < stopsToHit; stopsHit++)
             {
+                RuntimeSettings.BreakOutOfPathing = false;
                 if (pokestopList.Count > 0)
                 {
                     //start at 0 ends with 19 = 20 for the leechers{
@@ -116,7 +117,7 @@ namespace PoGo.PokeMobBot.Logic.Tasks
 
                     var pokeStop = pokestopList[0];
                     pokestopList.RemoveAt(0);
-
+                    RuntimeSettings.TargetStopID = pokeStop.Id;
                     var distance = LocationUtils.CalculateDistanceInMeters(session.Client.CurrentLatitude,
                         session.Client.CurrentLongitude, pokeStop.Latitude, pokeStop.Longitude);
                     var fortInfo = await session.Client.Fort.GetFort(pokeStop.Id, pokeStop.Latitude, pokeStop.Longitude);
@@ -155,6 +156,8 @@ namespace PoGo.PokeMobBot.Logic.Tasks
                     var fortTry = 0; //Current check
                     const int retryNumber = 50; //How many times it needs to check to clear softban
                     const int zeroCheck = 5; //How many times it checks fort before it thinks it's softban
+                    if (RuntimeSettings.BreakOutOfPathing)
+                        continue;
                     do
                     {
                         cancellationToken.ThrowIfCancellationRequested();
@@ -186,10 +189,7 @@ namespace PoGo.PokeMobBot.Logic.Tasks
                                     });
                                     ShownSoftBanMessage = true;
                                 }
-                                if (session.LogicSettings.Teleport)
                                     await Task.Delay(session.LogicSettings.DelaySoftbanRetry);
-                                else
-                                    await DelayingUtils.Delay(session.LogicSettings.DelayBetweenPlayerActions, 400);
                             }
                         }
                         else
@@ -207,17 +207,14 @@ namespace PoGo.PokeMobBot.Logic.Tasks
                                 Description = fortInfo.Description,
                                 url = fortInfo.ImageUrls[0]
                             });
-
+                            session.MapCache.UsedPokestop(pokeStop);
                             break; //Continue with program as loot was succesfull.
                         }
                     } while (fortTry < retryNumber - zeroCheck);
                     //Stop trying if softban is cleaned earlier or if 40 times fort looting failed.
 
                     ShownSoftBanMessage = false;
-                    if (session.LogicSettings.Teleport)
                         await Task.Delay(session.LogicSettings.DelayPokestop);
-                    else
-                        await Task.Delay(1000, cancellationToken);
 
 
                     //Catch Lure Pokemon
@@ -317,6 +314,7 @@ namespace PoGo.PokeMobBot.Logic.Tasks
 
             while (pokestopList.Any())
             {
+                RuntimeSettings.BreakOutOfPathing = false;
                 cancellationToken.ThrowIfCancellationRequested();
 
                 //resort
@@ -346,7 +344,7 @@ namespace PoGo.PokeMobBot.Logic.Tasks
 
                 var pokeStop = pokestopList[0];
                 pokestopList.RemoveAt(0);
-
+                RuntimeSettings.TargetStopID = pokeStop.Id;
                 var distance = LocationUtils.CalculateDistanceInMeters(session.Client.CurrentLatitude,
                     session.Client.CurrentLongitude, pokeStop.Latitude, pokeStop.Longitude);
                 var fortInfo = await session.Client.Fort.GetFort(pokeStop.Id, pokeStop.Latitude, pokeStop.Longitude);
@@ -381,6 +379,8 @@ namespace PoGo.PokeMobBot.Logic.Tasks
                 var fortTry = 0; //Current check
                 const int retryNumber = 50; //How many times it needs to check to clear softban
                 const int zeroCheck = 5; //How many times it checks fort before it thinks it's softban
+                if (RuntimeSettings.BreakOutOfPathing)
+                    continue;
                 do
                 {
                     cancellationToken.ThrowIfCancellationRequested();
@@ -418,7 +418,7 @@ namespace PoGo.PokeMobBot.Logic.Tasks
                                 await Task.Delay(session.LogicSettings.DelaySoftbanRetry);
                             }
                             else
-                                await DelayingUtils.Delay(session.LogicSettings.DelayBetweenPlayerActions, 400);
+                                await Task.Delay(session.LogicSettings.DelaySoftbanRetry);
                         }
                     }
                     else
@@ -436,17 +436,14 @@ namespace PoGo.PokeMobBot.Logic.Tasks
                             Description = fortInfo.Description,
                             url = fortInfo.ImageUrls[0]
                         });
-
+                        session.MapCache.UsedPokestop(pokeStop);
                         break; //Continue with program as loot was succesfull.
                     }
                 } while (fortTry < 1);//retryNumber - zeroCheck && fortSearch.CooldownCompleteTimestampMs < DateTime.UtcNow.ToUnixTime());
                     //Stop trying if softban is cleaned earlier or if 40 times fort looting failed.
 
 
-                if(session.LogicSettings.Teleport)
-                    await Task.Delay(session.LogicSettings.DelayPokestop);
-                else
-                    await Task.Delay(1000, cancellationToken);
+                await Task.Delay(session.LogicSettings.DelayPokestop);
 
 
                 //Catch Lure Pokemon
@@ -517,7 +514,7 @@ namespace PoGo.PokeMobBot.Logic.Tasks
             {
                 pokeStops = pokeStops.Where(
                     i =>
-                        i.Type == FortType.Checkpoint &&
+                        i.Used == false && i.Type == FortType.Checkpoint &&
                         i.CooldownCompleteTimestampMS < DateTime.UtcNow.ToUnixTime() &&
                         ( // Make sure PokeStop is within max travel distance, unless it's set to 0.
                             LocationUtils.CalculateDistanceInMeters(
@@ -530,7 +527,7 @@ namespace PoGo.PokeMobBot.Logic.Tasks
             {
                 pokeStops = pokeStops.Where(
                         i =>
-                            i.Type == FortType.Checkpoint &&
+                            i.Used == false && i.Type == FortType.Checkpoint &&
                             i.CooldownCompleteTimestampMS < DateTime.UtcNow.ToUnixTime() &&
                             ( // Make sure PokeStop is within max travel distance, unless it's set to 0.
                                 LocationUtils.CalculateDistanceInMeters(

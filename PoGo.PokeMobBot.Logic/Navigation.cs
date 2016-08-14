@@ -139,6 +139,14 @@ namespace PoGo.PokeMobBot.Logic
 
             do
             {
+                if(RuntimeSettings.BreakOutOfPathing == true)
+                if (RuntimeSettings.lastPokeStopCoordinate.Latitude.Equals(targetLocation.Latitude) &&
+                    RuntimeSettings.lastPokeStopCoordinate.Longitude.Equals(targetLocation.Latitude))
+                {
+                    RuntimeSettings.BreakOutOfPathing = true;
+                    break;
+                }
+
                 cancellationToken.ThrowIfCancellationRequested();
 
                 var millisecondsUntilGetUpdatePlayerLocationResponse =
@@ -174,8 +182,8 @@ namespace PoGo.PokeMobBot.Logic
                 if(functionExecutedWhileWalking2 != null)
                     await functionExecutedWhileWalking2();
 
-                //await Task.Delay(100, cancellationToken);
-            } while (LocationUtils.CalculateDistanceInMeters(sourceLocation, targetLocation) >= 2);
+                await Task.Delay(300, cancellationToken);
+            } while (LocationUtils.CalculateDistanceInMeters(sourceLocation, targetLocation) >= 2 && RuntimeSettings.BreakOutOfPathing == false);
 
             return result;
         }

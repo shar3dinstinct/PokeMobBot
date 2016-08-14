@@ -68,6 +68,8 @@ namespace PoGo.PokeMobBot.Logic
         bool StartupWelcomeDelay { get; }
         string TranslationLanguageCode { get; }
 
+        bool UseHumanPathing { get; }
+
         //coords and movement
         bool Teleport { get; }
         double WalkingSpeedInKilometerPerHour { get; }
