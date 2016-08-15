@@ -13,6 +13,7 @@ using POGOProtos.Networking.Responses;
 using System.Collections.Generic;
 using PoGo.PokeMobBot.Logic.State;
 using System.Diagnostics;
+using PoGo.PokeMobBot.Logic.Event;
 
 #endregion
 
@@ -52,6 +53,7 @@ namespace PoGo.PokeMobBot.Logic
                 //////create segments
                 //var segments = Math.Floor(distanceToDest / metersPerInterval);
                 List<GeoCoordinate> waypoints = new List<GeoCoordinate>();
+
                 ////get differences in lat / long
                 //var latDiff = Math.Abs(currentLocation.Latitude - destination.Latitude);
                 //var lonDiff = Math.Abs(currentLocation.Longitude - destination.Longitude);
@@ -70,7 +72,20 @@ namespace PoGo.PokeMobBot.Logic
 
                 //TODO: refactor the generation of waypoint code to break the waypoints given to us by the routing information down into segements like above.
                 //generate waypoints new code
-                var RoutingResponse = Routing.GetRoute(currentLocation, destination);
+                RoutingResponse RoutingResponse;
+                try
+                {
+                    RoutingResponse = Routing.GetRoute(currentLocation, destination);
+                }
+                catch (NullReferenceException ex)
+                {
+                    session.EventDispatcher.Send(new DebugEvent
+                    {
+                        Message = ex.ToString()
+                    });
+                    RoutingResponse = new RoutingResponse();
+                }
+
                 foreach (var item in RoutingResponse.coordinates)
                 {
                     //0 = lat, 1 = long (MAYBE NOT THO?)
@@ -119,7 +134,7 @@ namespace PoGo.PokeMobBot.Logic
                     //Console.WriteLine("Hit waypoint " + x);
                 }
                 var curcoord = new GeoCoordinate(session.Client.CurrentLatitude, session.Client.CurrentLongitude);
-                if (LocationUtils.CalculateDistanceInMeters(curcoord, destination) > 40)
+                if (LocationUtils.CalculateDistanceInMeters(curcoord, destination) > 40 || waypoints.Count < 1)
                 {
                     result = await navi.HumanPathWalking(session, destination, session.LogicSettings.WalkingSpeedInKilometerPerHour,
                         functionExecutedWhileWalking, functionExecutedWhileWalking2, cancellationToken);

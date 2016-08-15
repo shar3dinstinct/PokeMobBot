@@ -21,16 +21,21 @@ namespace PoGo.PokeMobBot.Logic
                 WebRequest request = WebRequest.Create(
                   $"http://www.yournavigation.org" + $"/api/1.0/gosmore.php?format=geojson&flat={start.Latitude}&flon={start.Longitude}&tlat={dest.Latitude}&tlon={dest.Longitude}&v=foot&fast=1&layer=mapnik");
                 request.Credentials = CredentialCache.DefaultCredentials;
-                WebResponse response = request.GetResponse();
-                Logger.Write("Got response from www.yournavigation.org", LogLevel.Debug);
-                //Console.WriteLine(((HttpWebResponse)response).StatusDescription);
-                Stream dataStream = response.GetResponseStream();
-                StreamReader reader = new StreamReader(dataStream);
-                string responseFromServer = reader.ReadToEnd();
+
+                string responseFromServer = "";
+
+                using (WebResponse response = request.GetResponse())
+                {
+                    Logger.Write("Got response from www.yournavigation.org", LogLevel.Debug);
+                    //Console.WriteLine(((HttpWebResponse)response).StatusDescription);
+                    using (Stream dataStream = response.GetResponseStream())
+                    using (StreamReader reader = new StreamReader(dataStream))
+                    {
+                        responseFromServer = reader.ReadToEnd();
+                    }
+                }
                 //Console.WriteLine(responseFromServer);
                 RoutingResponse responseParsed = JsonConvert.DeserializeObject<RoutingResponse>(responseFromServer);
-                reader.Close();
-                response.Close();
 
                 return responseParsed;
             }
