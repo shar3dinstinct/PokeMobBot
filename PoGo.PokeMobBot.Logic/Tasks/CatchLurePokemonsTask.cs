@@ -1,5 +1,6 @@
 ﻿#region using directives
 
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using PoGo.PokeMobBot.Logic.Common;
@@ -48,7 +49,9 @@ namespace PoGo.PokeMobBot.Logic.Tasks
 
                 if (encounter.Result == DiskEncounterResponse.Types.Result.Success)
                 {
-                    await CatchPokemonTask.Execute(session, encounter, null, currentFortData, encounterId);
+                    var pokemons = await session.MapCache.MapPokemons(session);
+                    var pokemon = pokemons.FirstOrDefault(i => i.PokemonId == encounter.PokemonData.PokemonId);
+                    await CatchPokemonTask.Execute(session, encounter, pokemon, currentFortData, encounterId);
                 }
                 else if (encounter.Result == DiskEncounterResponse.Types.Result.PokemonInventoryFull)
                 {
